@@ -1,0 +1,66 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Fecha de cálculo -->
+    <div class="flex flex-col">
+        <label for="resumenFechaCalculo" class="mb-2">Fecha del cálculo</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenFechaCalculoValor" class="mb-2 label-valor capitalize">{{ resumenCredito.fechaProcesoCotizacion | date: 'EEEE, dd MMMM yyyy' }}</label>
+    </div>
+    <!-- Tasa anual -->
+    <div class="flex flex-col">
+        <label for="resumenTasaAnual" class="mb-2">Tasa anual</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenTasaAnualValor" class="mb-2 label-valor">{{ resumenCredito.tasaEfectivoAnual }}</label>
+    </div>
+    <!-- Tasa mensual -->
+    <div class="flex flex-col">
+        <label for="resumenTasaMensual" class="mb-2">Tasa mensual</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenTasaMensualValor" class="mb-2 label-valor">{{ resumenCredito.tasaMesVencido }}</label>
+    </div>
+    <!-- Monto a financiar -->
+    <div class="flex flex-col">
+        <label for="resumenMontoFinanciar" class="mb-2">Monto a financiar</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenMontoFinanciarValor" class="mb-2 label-valor">{{ resumenCredito.valorFinanciacion | numberFormat }}</label>
+    </div>
+    <!-- Valor primer pago -->
+    <div class="flex flex-col relative">
+        <label for="resumenValorPrimerPago" class="mb-2 flex items-center">Valor primer pago
+          <span class="material-symbols-outlined text-red-500 ml-2 cursor-pointer"
+            data-tooltip-target="tooltip-inicio-poliza">help</span>
+        </label>
+        <div id="tooltipValorPrimerPago" role="tooltip"
+          class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+          Pólizas que superen el inicio de vigencia entre 46 y 60 días requerirán del 25% del valor de la póliza como primer pago. Si superan el inicio de vigencia entre 61 y 75 días requerirán del 30% del valor de la póliza como primer pago.
+          <div class="tooltip-arrow" data-popper-arrow></div>
+        </div>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenValorPrimerPagoValor" class="mb-2 label-valor">{{ resumenCredito.valorPrimeraCuota | numberFormat }}</label>
+    </div>
+    <!-- Cuotas restantes -->
+    <div class="flex flex-col">
+        <label for="resumenCuotasRestantes" class="mb-2">Cuotas restantes</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenCuotasRestantesValor" class="mb-2 label-valor">{{ resumenCredito.cuotasRestantes }}</label>
+    </div>
+    <!-- Valor cuotas mensuales faltantes -->
+    <div class="flex flex-col">
+        <label for="resumenCuotasMensualesFaltantes" class="mb-2">Valor cuotas mensuales faltantes</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenCuotasMensualesFaltantesValor" class="mb-2 label-valor">{{ resumenCredito.valorCuotasRestantes | numberFormat }}</label>
+    </div>
+    <!-- Cotización válida hasta -->
+    <div class="flex flex-col">
+        <label for="resumenCotizacionValida" class="mb-2">Cotización válida hasta</label>
+    </div>
+    <div class="flex flex-col">
+        <label for="resumenCotizacionValidaValor" class="mb-2 label-valor capitalize">{{ resumenCredito.fechaValidezCotizacion | date: 'EEEE, dd MMMM yyyy' }}</label>
+    </div>
+</div>

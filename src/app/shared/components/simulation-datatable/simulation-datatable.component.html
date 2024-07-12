@@ -1,0 +1,25 @@
+<div class="overflow-x-auto">
+  <table class="w-full xs:w-auto xs:table-auto bg-white border-collapse border border-gray-300 text-sm xs:text-base">
+    <thead>
+      <tr class="text-white">
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">#</th>
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">Cuota</th>
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">Valor Cuota</th>
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">Intereses</th>
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">Capital</th>
+        <th class="px-4 py-2 mat-header-cell text-center text-sm font-medium">Saldo Capital</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cuota of planPagos">
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.numeroDeCuota }}</td>
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.fechaPagoCuota | date:'dd/MMM/yyyy' }}
+        </td>
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.valorCuota | numberFormat }}</td>
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.valorIntereses | numberFormat }}</td>
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.valorCapital | numberFormat }}</td>
+        <td class="px-4 py-2 mat-cell text-center text-sm font-medium">{{ cuota.valorSaldoCapital | numberFormat }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

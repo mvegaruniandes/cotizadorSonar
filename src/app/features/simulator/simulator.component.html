@@ -1,0 +1,283 @@
+<div class="flex flex-col md:flex-row h-screen">
+  <!-- Columna de la imagen -->
+  <div class="hidden md:flex md:flex-2 xl:flex-2 2xl:flex-2 relative">
+    <img src="./assets/images/background-crediestado-2.jpg" alt="Background Crediestado"
+      class="w-full h-full object-cover" />
+    <div class="absolute bottom-8 left-8 mb-4 ml-4 flex flex-col">
+    </div>
+  </div>
+
+  <!-- Columna del formulario con scroll -->
+  <div class="flex-1 flex items-center justify-center overflow-y-auto h-screen">
+    <div class="w-full py-6 bg-white h-full overflow-y-auto">
+      <div class="flex flex-col w-full h-full items-center justify-start">
+        <div class="flex flex-col px-6 mb-2 items-center text-center">
+          <img class="max-w-md mt-1" src="./assets/images/crediestado.png" alt="Logo Crediestado" style="width: 300px;">
+          <h1 class="font-bold mt-6">Cotizador financiación de pólizas</h1>
+          <h2 class="font-bold mt-4">Selecciona el tipo de producto y valor de póliza que deseas financiar</h2>
+        </div>
+        <div class="h-[4vh]"></div>
+        <!-- Aquí va tu formulario u otro contenido -->
+        <div class="container mx-auto p-6">
+          <form [formGroup]="cotizadorForm" (ngSubmit)="calcularCotizacion()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Productos disponibles -->
+              <div class="flex flex-col">
+                <label for="producto" class="mb-2">Productos disponibles</label>
+                <select id="producto" formControlName="producto" class="p-2 border rounded">
+                  <option value="">Elige el producto que deseas cotizar</option>
+                  <option *ngFor="let ramo of ramos" [value]="ramo.id">{{ ramo.nombre }}</option>
+                </select>
+                <div *ngIf="cotizadorForm.controls['producto'].invalid && cotizadorForm.controls['producto'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+
+              <!-- Valor póliza -->
+              <div class="flex flex-col">
+                <label for="valorPoliza" class="mb-2">Valor póliza</label>
+                <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded"
+                  (input)="onInputChangeValorPoliza($event)" placeholder="$ Ingresa el valor" />
+                <div
+                  *ngIf="cotizadorForm.controls['valorPoliza'].invalid && cotizadorForm.controls['valorPoliza'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio. El valor de la póliza debe ser mínimo de $400.000.
+                </div>
+              </div>
+
+              <!-- Inicio póliza -->
+              <div class="flex flex-col relative">
+                <label for="fechaInicioPoliza" class="mb-2 flex items-center">Inicio póliza
+                  <span class="material-symbols-outlined text-red-500 ml-2 cursor-pointer"
+                    data-tooltip-target="tooltip-inicio-poliza">help</span>
+                </label>
+                <div id="tooltip-inicio-poliza" role="tooltip"
+                  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
+                  Fecha en la que inicia la póliza.
+                  <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
+                <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza" (blur)="calcularPlazos()"
+                  class="p-2 border rounded" />
+                <div
+                  *ngIf="cotizadorForm.controls['fechaInicioPoliza'].invalid && cotizadorForm.controls['fechaInicioPoliza'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+
+              <!-- Fecha legalización -->
+              <div class="flex flex-col">
+                <label for="fechaLegalizacion" class="mb-2">Fecha legalización</label>
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
+                  class="p-2 border rounded" />
+                <div
+                  *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+
+              <!-- Plazos -->
+              <div class="flex flex-col">
+                <label for="plazo" class="mb-2">Plazos</label>
+                <select id="plazo" formControlName="plazo" class="p-2 border rounded">
+                  <option value="">Selecciona un plazo</option>
+                  <option *ngFor="let plazo of plazos" [value]="plazo">{{ plazo }}</option>
+                </select>
+                <div *ngIf="cotizadorForm.controls['plazo'].invalid && cotizadorForm.controls['plazo'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+
+              <!-- Tienes beneficiario oneroso -->
+              <div class="flex flex-col">
+                <label class="mb-2">¿Tienes beneficiario oneroso?</label>
+                <div class="flex items-center">
+                  <input type="radio" id="beneficiarioSi" formControlName="beneficiario" value="true" class="mr-2" />
+                  <label for="beneficiarioSi" class="mr-4">Sí</label>
+                  <input type="radio" id="beneficiarioNo" formControlName="beneficiario" value="false" class="mr-2" />
+                  <label for="beneficiarioNo">No</label>
+                </div>
+                <div
+                  *ngIf="cotizadorForm.controls['beneficiario'].invalid && cotizadorForm.controls['beneficiario'].touched"
+                  class="text-red-500 text-xs font-bold">
+                  Este campo es obligatorio.
+                </div>
+              </div>
+            </div>
+            <!-- Información -->
+            <div class="container mt-4 px-6 py-2">
+              <div class="flex items-baseline mb-4">
+                <span class="material-symbols-outlined mr-2">info</span>
+                <label class="label-info">Antes de calcular recuerde diligenciar todos los campos.</label>
+              </div>
+              <div class="flex items-baseline">
+                <span class="material-symbols-outlined mr-2">info</span>
+                <label class="label-info">Para modificar el cálculo debe seleccionar el botón "Restablecer".</label>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Botón de enviar -->
+              <div class="md:col-span-2 flex justify-center mt-2">
+                <button type="submit" class="px-2 py-2 primary-button mr-4"
+                  [disabled]="habilitarBotonCalcular()">Calcular
+                  cotización</button>
+                <button type="button" class="px-4 py-2 secondary-button ml-4" (click)="recargarPagina()">Restablecer
+                  valores</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div *ngIf="simulacionActiva" class="container mx-auto p-6">
+          <!-- Información - Resumen de la cotización -->
+          <h2 class="font-bold mb-3">Resumen de la cotización</h2>
+          <!---->
+          <app-credit-summary-information [resumenCredito]="resumenCredito"></app-credit-summary-information>
+          <!---->
+          <div class="container py-2">
+            <div class="flex items-baseline mb-4">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Ten en cuenta que para continuar con la solicitud formal de la financiación,
+                deberás proveer toda la documentación necesaria.</label>
+            </div>
+            <div class="flex items-baseline">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Esta cotización asume que realizas el primer pago en cuentas de
+                Crediestado.</label>
+            </div>
+          </div>
+
+          <!-- Información - ¿Deseas realizar un primer pago de mayor valor?-->
+          <h2 class="font-bold mb-3 mt-6">¿Deseas realizar un primer pago de mayor valor?</h2>
+          <!---->
+          <div class="container py-2">
+            <div class="flex items-baseline mb-4">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Pólizas que superen el inicio de vigencia entre 46 y 60 días requerirán del 20%
+                del valor de la póliza como primer pago. Si superan el inicio de vigencia entre 61 y 75 días requerirán
+                del 35% del valor de la póliza como primer pago.</label>
+            </div>
+            <div class="flex items-baseline">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Si vas a realizar un primer pago mayor al valor de la cotización marca
+                Si.</label>
+            </div>
+          </div>
+
+          <!-- Información - ¿Deseas realizar un primer pago de mayor valor?-->
+          <form [formGroup]="pagoMayorForm" (ngSubmit)="recalcularCotizacion()"
+            class="grid grid-cols-1 md:grid-cols-1 gap-1">
+            <!-- Tienes beneficiario oneroso -->
+            <div class="flex flex-col px-6">
+              <div class="flex items-center">
+                <input type="radio" id="pagoSi" formControlName="pago" value="true" class="mr-2"
+                  (change)="onRadioChangeValorPrimerPago($event)" />
+                <label for="pagoSi" class="mr-4">Sí</label>
+                <input type="radio" id="pagoNo" formControlName="pago" value="false" class="mr-2"
+                  (change)="onRadioChangeValorPrimerPago($event)" />
+                <label for="pagoNo">No</label>
+              </div>
+            </div>
+            <!-- Valor póliza -->
+            <div class="flex flex-col px-6">
+              <label for="valorPrimerPago" class="mb-2">Valor primer pago</label>
+              <input id="valorPrimerPago" type="text" formControlName="valorPrimerPago" class="p-2 border rounded"
+                placeholder="$ Ingresa el valor" [readOnly]="pagoMayorForm.value.pago == 'false'" (input)="onInputChangeValorMayorPrimeraCuota($event)"/>
+            </div>
+            <div class="flex flex-col px-6">
+              <button type="submit" class="py-2 primary-button mr-4" [disabled]="pagoMayorForm.valid">Recalcular mi
+                cotización</button>
+            </div>        
+          </form>
+
+          <!-- Información - Así quedaría tu plan detallado de pagos-->
+          <h2 class="font-bold mb-3 mt-6">Así quedaría tu plan detallado de pagos</h2>
+
+          <div class="container mt-4 px-6 py-2">
+            <div class="flex items-center justify-center mb-4">
+              <app-simulation-datatable [planPagos]="planPagos"></app-simulation-datatable>
+            </div>
+          </div>
+
+          <!-- Información - Personaliza tu cotización, indicando la información del cliente-->
+          <h2 class="font-bold mb-3 mt-6">Personaliza tu cotización, indicando la información del cliente</h2>
+          <!---->
+          <div class="container py-2">
+            <div class="flex items-baseline mb-4">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Ten presente que para hacer uso de las opciones de este Cotizador, debes aceptar
+                nuestros Términos y Condiciones de Uso, así como nuestra Política de Privacidad y tratamiento de datos
+                personales.</label>
+            </div>
+            <form [formGroup]="terminosPoliticaForm">
+              <div class="label-group flex items-center ml-5">
+                <div class="flex items-center">
+                  <input type="checkbox" id="aceptoTerminos" class="checkbox mr-2" formControlName="aceptoTerminos" />
+                  <span>
+                    Acepto -
+                    <a id="linkDescarga" href="~/Files/TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB CREDIESTADO.pdf"
+                      download="TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB CREDIESTADO.pdf" class="text-purple-link">
+                      Términos y Condiciones de Uso
+                    </a>
+                  </span>
+                </div>
+              </div>
+              <div class="label-group flex items-center ml-5">
+                <div class="flex items-center">
+                  <input type="checkbox" id="aceptoPolitica" class="checkbox mr-2" formControlName="aceptoPolitica" />
+                  <span>
+                    Acepto -
+                    <a id="linkDescarga" href="~/Files/POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS CREDIESTADO.pdf"
+                      download="POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS CREDIESTADO.pdf" class="text-purple-link">
+                      Política de Privacidad y tratamiento de datos personales
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </form>
+            <div class="flex justify-center space-x-8 mt-8">
+              <!-- Botón - Descarga tu cotización -->
+              <div class="flex flex-col items-center">
+                <button class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center"
+                  style="background-color: #3C1B71;" (click)="abrirModalPersonalizacion(1)">
+                  <span class="material-symbols-outlined" style="font-size: 30px; color: #fff;">file_save</span>
+                </button>
+                <span class="mt-2 text-center text-sm">Descarga tu cotización</span>
+              </div>
+              <!-- Botón - Envía la cotización al correo -->
+              <div class="flex flex-col items-center">
+                <button class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center"
+                  style="background-color: #3C1B71;" (click)="abrirModalPersonalizacion(2)">
+                  <span class="material-symbols-outlined" style="font-size: 30px; color: #fff;">mail</span>
+                </button>
+                <span class="mt-2 text-center text-sm">Envía la cotización al correo</span>
+              </div>
+              <!-- Botón - Continua el proceso -->
+              <div class="flex flex-col items-center">
+                <button class="w-14 h-14 rounded-full text-white flex items-center justify-center"
+                  style="background-color: #3C1B71;" (click)="abrirModalPersonalizacion(3)">
+                  <span class="material-symbols-outlined" style="font-size: 30px; color: #fff;">history_edu</span>
+                </button>
+                <span class="mt-2 text-center text-sm">Continua el proceso</span>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-1"></div>
+        </div>
+        <div class="container mx-auto p-6">
+          <app-accordion-info></app-accordion-info>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Modal de opciones de personalización-->
+@if (modalSwitchAlert) {
+<app-alert-modal [mensaje]="mensajeAlerta"></app-alert-modal>
+}
+@if (modalSwitchPersonalize) {
+<app-personalize-simulation-modal [datos]="datosModal"></app-personalize-simulation-modal>
+}

@@ -1,1 +1,130 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('./assets/fonts/Poppins/Poppins-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Rubik';
+    src: url('./assets/fonts/Rubik/Rubik-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Rubik-Light';
+    src: url('./assets/fonts/Rubik/Rubik-Light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Rubik-Light', sans-serif !important;
+    margin: 0;
+}
+
+h1 {
+    font-size: 26px;
+    color: #623E9C;
+}
+
+h2{
+    font-size: 20px;
+    color: #9661EC;
+}
+
+p{
+    font-size: 16px;
+}
+
+.primary-button {
+    background-color: #3C1B71;
+    border: none;
+    width: 400px;
+    padding: 8px 20px;
+    font-size: 14px;
+    color: white;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.primary-button:hover {
+    opacity: .9;
+}
+
+.primary-button:disabled {
+    opacity: .6;
+    cursor: default;
+}
+
+.primary-button {
+    background-color: #3C1B71;
+    border: none;
+    width: 260px;
+    padding: 8px 20px;
+    font-size: 14px;
+    color: white;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 15px;
+
+    :hover {
+        opacity: .9;
+    }
+
+    :disabled {
+        opacity: .6;
+        cursor: default;
+    }
+}
+
+.secondary-button {
+    background-color: white;
+    border: none;
+    width: 260px;
+    padding: 8px 20px;
+    font-size: 14px;
+    border: 1px solid #3C1B71;
+    color: #3C1B71;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 15px;
+
+    :hover {
+        background-color: #3C1B71;
+        color: white;
+    }
+
+    :disabled {
+        opacity: .6;
+        cursor: default;
+    }
+}
+
+.text-purple-link{
+    color: #9661EC;
+}
+
+.text-purple-link:hover{
+    color: #9661EC;
+    text-decoration: underline;
+}
+
+.material-symbols-outlined {
+    color: #9661EC;
+    font-size: 16px;
+}
+
+@media screen and (max-width: 600px) {
+    .primary-button, .secondary-button {
+        width: 300px;
+    }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

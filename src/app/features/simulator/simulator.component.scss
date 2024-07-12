@@ -1,0 +1,16 @@
+.tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+[data-tooltip-target]:hover~.tooltip,
+.tooltip:hover {
+    visibility: visible;
+    opacity: 1;
+}

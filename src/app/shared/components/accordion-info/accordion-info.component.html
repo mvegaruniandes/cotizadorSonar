@@ -1,0 +1,46 @@
+<div class="accordion">
+    <div class="accordion-header py-2 cursor-pointer flex justify-between items-center" (click)="togglePanel()">
+      <h2 class="font-bold">Información a tener presente</h2>
+      <span class="arrow material-symbols-outlined" style="font-size: 28px;" [ngClass]="{'rotate-180': isOpen}">keyboard_arrow_down</span>
+    </div>
+    <div class="panel" [ngClass]="{'panel-hidden': !isOpen, 'panel-visible': isOpen}">
+      <div class="p-4">
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Los valores descritos en el presente Cotizador son informativos y se encuentran sujetos a la solicitud formal de financiación de póliza realizada por el cliente a Crediestado.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Los términos (y cuota) de una cotización solo tienen validez para financiaciones aprobadas en el mes en curso.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">El valor mínimo de las cuotas mensuales deberá ser igual o superior a $100.000.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Financiaciones asociadas a pólizas colectivas, o con más de una póliza de vehículo, requerirán el diligenciamiento de una proforma adicional. Favor contactar a uno de nuestros Asesores Comerciales quienes lo orientarán en el proceso.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Pólizas que superen el inicio de vigencia entre 46 y 60 días requerirán del 20% del valor de la póliza como primer pago. Si superan el inicio de vigencia entre 61 y 75 días requerirán del 35% del valor de la póliza como primer pago.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Para aprobar una financiación, es requisito haber realizado el pago de la primera cuota a Crediestado.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Si la fecha límite de radicación es en fin de semana o festivo, debe radicar el día hábil previo a esa fecha.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Es importante tener en cuenta que la recepción de documentos y el pago inicial no garantizan la aceptación o aprobación de la financiación.</label>
+        </div>
+        <div class="flex items-baseline mb-4">
+          <span class="material-symbols-outlined mr-2">info</span>
+          <label class="label-info">Las pólizas de ramos pesados solo podrán ser financiadas dentro de los primeros 17 días de inicio de vigencia de la póliza, cualquier inquietud contacta a tu Asesor Comercial.</label>
+        </div>
+      </div>
+    </div>           
+  </div>
