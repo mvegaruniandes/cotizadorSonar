@@ -18,39 +18,40 @@ export interface DatosTomador {
 }
 
 export interface ModalPersonalizacion {
+    idSimulacion: number,
     idFormulario: number,
     titulo: string,
     tituloBoton: String
 }
 
 export interface CalcularCotizacionPlanPagos {
-    numeroDeCuota:     number;
-    fechaPagoCuota:    Date;
-    valorCuota:        number;
-    valorIntereses:    number;
-    valorCapital:      number;
+    numeroDeCuota: number;
+    fechaPagoCuota: Date;
+    valorCuota: number;
+    valorIntereses: number;
+    valorCapital: number;
     valorSaldoCapital: number;
 }
 
 export interface CalcularCotizacionResumen {
     fechaProcesoCotizacion: Date;
-    tasaEfectivoAnual:      number;
-    tasaMesVencido:         number;
-    valorFinanciacion:      number;
-    valorPrimeraCuota:      number;
-    valorCuotasRestantes:   number;
-    cuotasRestantes:        number;
+    tasaEfectivoAnual: number;
+    tasaMesVencido: number;
+    valorFinanciacion: number;
+    valorPrimeraCuota: number;
+    valorCuotasRestantes: number;
+    cuotasRestantes: number;
     fechaValidezCotizacion: Date;
-    fechaVigenciaTasa:      Date;
-    fechaInicioVigencia:    Date;
-    fechaFinVigencia:       Date;
-    fechaLegalizacion:      Date;
-    idPlan:                 number;
-    idRamo:                 number;
-    idSimulacionCredito:    number;
-    plazo:                  number;
-    esBenficiarioOneroso:   boolean;
-    esMayorValorPago:       boolean;
+    fechaVigenciaTasa: Date;
+    fechaInicioVigencia: Date;
+    fechaFinVigencia: Date;
+    fechaLegalizacion: Date;
+    idPlan: number;
+    idRamo: number;
+    idSimulacionCredito: number;
+    plazo: number;
+    esBenficiarioOneroso: boolean;
+    esMayorValorPago: boolean;
 }
 
 export const calcularCotizacionVacia: CalcularCotizacionResumen = {
@@ -72,4 +73,21 @@ export const calcularCotizacionVacia: CalcularCotizacionResumen = {
     plazo: 0,
     esBenficiarioOneroso: false,
     esMayorValorPago: false
-  };
+};
+
+export interface DocumentoPDF {
+    fileContents: string;
+    contentType: string;
+    fileDownloadName: string;
+    lastModified: Date | null;
+    entityTag: string | null;
+    enableRangeProcessing: boolean;
+}
+
+export interface PDFGenerado {
+    documento: null;
+    nombreDocumento: string;
+    idError: number;
+    error: boolean;
+    mensaje: string;
+}

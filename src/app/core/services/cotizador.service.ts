@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map } from 'rxjs';
 import { StorageService } from './storage.service';
-import { ResponseCotizacion, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
+import { ResponseCotizacion, ResponseDescargaCotizacion, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CotizadorService {
-  //private apiUrl = 'https://72.55.177.47/OlimpiaApi/api/';
+  //private apiUrl = 'http://72.55.177.47/CotizadorCrediestadoBack/api/';
   //private apiUrl = 'https://aplicaciones.crediestado.com.co/OlimpiaApi/api/';
   private apiUrl = 'https://localhost:7050/api/';
 
@@ -63,7 +63,8 @@ export class CotizadorService {
 
   // Descargar documento de cotización
   descargarCotizacion(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}general/descargarCotizacion`, data).pipe(
+    return this.http.post<ResponseDescargaCotizacion>(`${this.apiUrl}general/descargarCotizacion`, data).pipe(
+      map(response => { return response }),
       catchError(this.handleError)
     );
   }

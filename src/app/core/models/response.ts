@@ -1,4 +1,4 @@
-import { CalcularCotizacionPlanPagos, CalcularCotizacionResumen, Ramo, TipoDocumento } from "./cotizador-models";
+import { CalcularCotizacionPlanPagos, CalcularCotizacionResumen, DocumentoPDF, PDFGenerado, Ramo, TipoDocumento } from "./cotizador-models";
 
 export interface ResponseTipoDocumento {
     tiposDocumento: TipoDocumento[];
@@ -27,4 +27,9 @@ export interface ResponseCotizacion {
     idError: number;
     error: boolean;
     mensaje: string;
+}
+
+export interface ResponseDescargaCotizacion {
+    estado:  PDFGenerado;
+    documento: DocumentoPDF;
 }

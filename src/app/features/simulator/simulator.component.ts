@@ -30,7 +30,7 @@ export class SimulatorComponent implements OnInit {
   planPagos: CalcularCotizacionPlanPagos[] = [];
   resumenCredito: CalcularCotizacionResumen = calcularCotizacionVacia;
 
-  datosModal: ModalPersonalizacion = { idFormulario: 0, titulo: '', tituloBoton: '' };
+  datosModal: ModalPersonalizacion = {idSimulacion: 0, idFormulario: 0, titulo: '', tituloBoton: '' };
 
   constructor(private fb: FormBuilder,
     private spinner: SpinnerService,
@@ -234,6 +234,7 @@ export class SimulatorComponent implements OnInit {
       switch (id) {
         case 1:
           this.datosModal = {
+            idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos personales del tomador de la póliza para descargar la Cotización',
             tituloBoton: 'Descargar'
@@ -241,6 +242,7 @@ export class SimulatorComponent implements OnInit {
           break;
         case 2:
           this.datosModal = {
+            idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos personales del tomador de la póliza para enviar la Cotización',
             tituloBoton: 'Enviar'
@@ -248,13 +250,14 @@ export class SimulatorComponent implements OnInit {
           break;
         case 3:
           this.datosModal = {
+            idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos del tomador de la póliza y continúa con el diligenciamiento del pagaré',
             tituloBoton: 'Continuar'
           };
           break;
         default:
-          this.datosModal = { idFormulario: id, titulo: '', tituloBoton: '' };
+          this.datosModal = {idSimulacion: this.resumenCredito.idSimulacionCredito, idFormulario: id, titulo: '', tituloBoton: '' };
           break;
       }
 

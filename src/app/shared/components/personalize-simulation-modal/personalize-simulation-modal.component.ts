@@ -3,8 +3,10 @@ import { SharedService } from '../../../core/services/shared.service';
 import { SwitchModalService } from '../../../core/services/switch-modal.service';
 import { DatosTomador, ModalPersonalizacion, TipoDocumento } from '../../../core/models/cotizador-models';
 import { CotizadorService } from '../../../core/services/cotizador.service';
-import { ResponseTipoDocumento } from '../../../core/models/response';
+import { ResponseDescargaCotizacion, ResponseTipoDocumento } from '../../../core/models/response';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SpinnerService } from '../../../core/services/spinner.service';
+import { FileService } from '../../../core/services/file.service';
 
 @Component({
   selector: 'app-personalize-simulation-modal',
@@ -19,6 +21,8 @@ export class PersonalizeSimulationModalComponent {
 
   constructor(private fb: FormBuilder,
     private sharedService: SharedService,
+    private fileService: FileService,
+    private spinner: SpinnerService,
     private cotizadorService: CotizadorService,
     private switchModalService: SwitchModalService) {
     this.tomadorForm = this.fb.group({
@@ -61,10 +65,57 @@ export class PersonalizeSimulationModalComponent {
   //Función para enviar formulario
   onSubmit() {
     if (this.tomadorForm.valid) {
+      this.spinner.showSpinner();
       this.guardarInfoTomador();
 
+      let data = {
+        'idSimulacionCredito': 1,
+        'idTipoDocumento': this.tomadorForm.value.tipoDocumento,
+        'numeroDocumento': this.tomadorForm.value.numeroIdentificacion,
+        'nombres': this.tomadorForm.value.nombreTomador,
+        'primerApellido': this.tomadorForm.value.primerApellidoTomador,
+        'segundoApellido': this.tomadorForm.value.segundoApellidoTomador,
+        'email': this.tomadorForm.value.correoTomador
+      };
+
+      if (this.datos.idFormulario == 1) {
+        this.descargarCotizacion(data);
+      } else if (this.datos.idFormulario == 2) {
+        this.enviarCotizacion();
+      } else {
+
+      }
+
+      this.spinner.hideSpinner();
       this.cerrarModal();
     }
+  }
+
+  // Servicio para descargar la cotización del cliente
+  descargarCotizacion(data: any) {
+    this.cotizadorService.descargarCotizacion(data).subscribe(
+      (response: ResponseDescargaCotizacion) => {
+        if (!response.estado.error) {
+          const blob = this.fileService.base64ToBlob(response.documento.fileContents, response.documento.contentType);
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = response.documento.fileDownloadName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
+        else {
+          this.mostrarMensajeError(response.estado.mensaje);
+        }
+      }
+    );
+  }
+
+  // Servicio para enviar la cotización del cliente
+  enviarCotizacion() {
+
   }
 
   // Función para precargar datos
@@ -98,6 +149,5 @@ export class PersonalizeSimulationModalComponent {
   }
 
   mostrarMensajeError(mensaje: string) {
-
   }
 }
