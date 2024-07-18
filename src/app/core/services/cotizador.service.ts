@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map } from 'rxjs';
 import { StorageService } from './storage.service';
-import { ResponseCotizacion, ResponseDescargaCotizacion, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
+import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacion, ResponseEnviarCotizacion, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CotizadorService {
-  //private apiUrl = 'http://72.55.177.47/CotizadorCrediestadoBack/api/';
+  //private apiUrl = 'https://72.55.177.47/CotizadorCrediestadoBack/api/';
   //private apiUrl = 'https://aplicaciones.crediestado.com.co/OlimpiaApi/api/';
   private apiUrl = 'https://localhost:7050/api/';
 
@@ -42,6 +42,7 @@ export class CotizadorService {
   // Servicio para calcular la cotización
   calcularCotizacion(data: any): Observable<any> {
     return this.http.post<ResponseCotizacion>(`${this.apiUrl}cotizador/calcularCotizacion`, data).pipe(
+      map(response => { return response }),
       catchError(this.handleError)
     );
   }
@@ -56,7 +57,8 @@ export class CotizadorService {
 
   // Enviar documento de cotización al correo
   enviarCotizacion(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}general/enviarCorreo`, data).pipe(
+    return this.http.post<ResponseEnviarCotizacion>(`${this.apiUrl}general/enviarCorreo`, data).pipe(
+      map(response => { return response }),
       catchError(this.handleError)
     );
   }
@@ -71,7 +73,8 @@ export class CotizadorService {
 
   // Continuar proceso de financiación
   continuarProceso(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}general/continuarProceso`, data).pipe(
+    return this.http.post<ResponseContinuarProceso>(`${this.apiUrl}general/continuarProceso`, data).pipe(
+      map(response => { return response }),
       catchError(this.handleError)
     );
   }

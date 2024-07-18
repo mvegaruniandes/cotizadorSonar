@@ -48,15 +48,17 @@
 
               <!-- Inicio póliza -->
               <div class="flex flex-col relative">
-                <label for="fechaInicioPoliza" class="mb-2 flex items-center">Inicio póliza
-                  <span class="material-symbols-outlined text-red-500 ml-2 cursor-pointer"
-                    data-tooltip-target="tooltip-inicio-poliza">help</span>
+                <label for="fechaInicioPoliza" class="mb-2 flex items-center">
+                  Fecha inicio póliza
+                  <div class="relative ml-2">
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover" data-tooltip-target="tooltip-inicio-poliza">help</span>
+                    <div id="tooltip-inicio-poliza" role="tooltip"
+                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip left-1/2 transform -translate-x-1/2">
+                      Fecha en la que inicia la póliza.
+                      <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                  </div>
                 </label>
-                <div id="tooltip-inicio-poliza" role="tooltip"
-                  class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300 tooltip">
-                  Fecha en la que inicia la póliza.
-                  <div class="tooltip-arrow" data-popper-arrow></div>
-                </div>
                 <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza" (blur)="calcularPlazos()"
                   class="p-2 border rounded" />
                 <div
@@ -67,16 +69,23 @@
               </div>
 
               <!-- Fecha legalización -->
-              <div class="flex flex-col">
-                <label for="fechaLegalizacion" class="mb-2">Fecha legalización</label>
-                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
-                  class="p-2 border rounded" />
-                <div
-                  *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched"
-                  class="text-red-500 text-xs font-bold">
+              <div class="flex flex-col relative">
+                <label for="fechaLegalizacion" class="mb-2 flex items-center">
+                  Fecha legalización
+                  <div class="relative ml-2">
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover" data-tooltip-target="tooltip-fecha-legalizacion">help</span>
+                    <div id="tooltip-fecha-legalizacion" role="tooltip"
+                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-16 left-1/2 transform -translate-x-1/2">
+                      Fecha estimada de la radicación completa de la solicitud de financiación.
+                      <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                  </div>
+                </label>
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()" class="p-2 border rounded" />
+                <div *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched" class="text-red-500 text-xs font-bold">
                   Este campo es obligatorio.
                 </div>
-              </div>
+              </div>                                 
 
               <!-- Plazos -->
               <div class="flex flex-col">
@@ -184,12 +193,13 @@
             <div class="flex flex-col px-6">
               <label for="valorPrimerPago" class="mb-2">Valor primer pago</label>
               <input id="valorPrimerPago" type="text" formControlName="valorPrimerPago" class="p-2 border rounded"
-                placeholder="$ Ingresa el valor" [readOnly]="pagoMayorForm.value.pago == 'false'" (input)="onInputChangeValorMayorPrimeraCuota($event)"/>
+                placeholder="$ Ingresa el valor" [readOnly]="pagoMayorForm.value.pago == 'false'"
+                (input)="onInputChangeValorMayorPrimeraCuota($event)" />
             </div>
             <div class="flex flex-col px-6">
               <button type="submit" class="py-2 primary-button mr-4" [disabled]="pagoMayorForm.valid">Recalcular mi
                 cotización</button>
-            </div>        
+            </div>
           </form>
 
           <!-- Información - Así quedaría tu plan detallado de pagos-->

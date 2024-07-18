@@ -33,3 +33,17 @@ export interface ResponseDescargaCotizacion {
     estado:  PDFGenerado;
     documento: DocumentoPDF;
 }
+
+export interface ResponseEnviarCotizacion {
+    enviado: boolean;
+    idError: number;
+    error:   boolean;
+    mensaje: string;
+}
+
+export interface ResponseContinuarProceso {
+    urlProceso: string;
+    idError:    number;
+    error:      boolean;
+    mensaje:    string;
+}

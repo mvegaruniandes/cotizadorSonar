@@ -1,12 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { SharedService } from '../../../core/services/shared.service';
 import { SwitchModalService } from '../../../core/services/switch-modal.service';
 import { DatosTomador, ModalPersonalizacion, TipoDocumento } from '../../../core/models/cotizador-models';
 import { CotizadorService } from '../../../core/services/cotizador.service';
-import { ResponseDescargaCotizacion, ResponseTipoDocumento } from '../../../core/models/response';
+import { ResponseContinuarProceso, ResponseDescargaCotizacion, ResponseEnviarCotizacion, ResponseTipoDocumento } from '../../../core/models/response';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SpinnerService } from '../../../core/services/spinner.service';
 import { FileService } from '../../../core/services/file.service';
+import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-personalize-simulation-modal',
@@ -19,7 +21,11 @@ export class PersonalizeSimulationModalComponent {
   tiposDocumento: TipoDocumento[] = [];
   tomadorForm: FormGroup;
 
+  ocultarCorreo: boolean = true;
+
   constructor(private fb: FormBuilder,
+    private router: Router,
+    private toast: NgToastService,
     private sharedService: SharedService,
     private fileService: FileService,
     private spinner: SpinnerService,
@@ -31,11 +37,12 @@ export class PersonalizeSimulationModalComponent {
       nombreTomador: ['', Validators.required],
       primerApellidoTomador: ['', Validators.required],
       segundoApellidoTomador: [''],
-      correoTomador: ['', [Validators.email]],
+      correoTomador: [''],
     });
   }
 
   ngOnInit(): void {
+    this.configurarValidadorCorreo();
     this.precargarInfoTomador();
     this.obtenerListadoTiposDocumento();
   }
@@ -65,11 +72,13 @@ export class PersonalizeSimulationModalComponent {
   //Función para enviar formulario
   onSubmit() {
     if (this.tomadorForm.valid) {
-      this.spinner.showSpinner();
       this.guardarInfoTomador();
+      this.cerrarModal();
+
+      this.spinner.showSpinner();
 
       let data = {
-        'idSimulacionCredito': 1,
+        'idSimulacionCredito': this.datos.idSimulacion,
         'idTipoDocumento': this.tomadorForm.value.tipoDocumento,
         'numeroDocumento': this.tomadorForm.value.numeroIdentificacion,
         'nombres': this.tomadorForm.value.nombreTomador,
@@ -81,13 +90,12 @@ export class PersonalizeSimulationModalComponent {
       if (this.datos.idFormulario == 1) {
         this.descargarCotizacion(data);
       } else if (this.datos.idFormulario == 2) {
-        this.enviarCotizacion();
+        this.enviarCotizacion(data);
       } else {
-
+        this.continuarProceso(data);
       }
 
       this.spinner.hideSpinner();
-      this.cerrarModal();
     }
   }
 
@@ -114,8 +122,40 @@ export class PersonalizeSimulationModalComponent {
   }
 
   // Servicio para enviar la cotización del cliente
-  enviarCotizacion() {
+  enviarCotizacion(data: any) {
+    this.cotizadorService.enviarCotizacion(data).subscribe(
+      (response: ResponseEnviarCotizacion) => {
+        if (!response.error) {
+          this.mostrarMensaje(response.mensaje);
+        } else {
+          this.mostrarMensajeError(response.mensaje);
+        }
+      }
+    );
+  }
 
+  // Servicio para continuar al proceso de financiación
+  continuarProceso(data: any) {
+    this.cotizadorService.continuarProceso(data).subscribe(
+      (response: ResponseContinuarProceso) => {
+        if (!response.error) {
+          window.location.href = response.urlProceso;
+        } else {
+          this.mostrarMensajeError(response.mensaje);
+        }
+      }
+    );
+  }
+
+  // Función para habilitar o inhabilitar validador de correo electrónico
+  configurarValidadorCorreo(){
+    if(this.datos.idFormulario == 2){
+      this.ocultarCorreo = false;
+      const correoControl = this.tomadorForm.get('correoTomador');
+
+      correoControl?.setValidators([Validators.required, Validators.email]);
+      correoControl?.updateValueAndValidity();
+    }
   }
 
   // Función para precargar datos
@@ -149,5 +189,10 @@ export class PersonalizeSimulationModalComponent {
   }
 
   mostrarMensajeError(mensaje: string) {
+    this.toast.danger(mensaje); 
+  }
+
+  mostrarMensaje(mensaje: string) {
+    this.toast.success(mensaje);
   }
 }

@@ -57,6 +57,8 @@ export class SimulatorComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinner.showSpinner();
+    this.storageService.clear();
+    
     this.switchModalService.$modalPersonalize.subscribe((value) => {
       this.modalSwitchPersonalize = value;
     });
