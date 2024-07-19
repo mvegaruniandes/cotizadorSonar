@@ -29,6 +29,7 @@ export class SimulatorComponent implements OnInit {
 
   ramos: Ramo[] = [];
   plazos: number[] = [];
+  plazoMaximo: number = 11;
 
   planPagos: CalcularCotizacionPlanPagos[] = [];
   resumenCredito: CalcularCotizacionResumen = calcularCotizacionVacia;
@@ -154,7 +155,7 @@ export class SimulatorComponent implements OnInit {
         "fechaInicioVigencia": this.cotizadorForm.value.fechaInicioPoliza,
         "fechaLegalizacion": this.cotizadorForm.value.fechaLegalizacion,
         "plazo": Number(this.cotizadorForm.value.plazo),
-        "esBeneficiarioOneroso": Boolean(this.cotizadorForm.value.beneficiario),
+        "esBeneficiarioOneroso": this.cotizadorForm.value.beneficiario == "true" ? true: false,
         "esMayorValorPago": esMayorValorPago,
         "valorMayorPago": valorMayorPago ?? null,
         "valorPoliza": this.convertCurrencyStringToNumber(this.cotizadorForm.value.valorPoliza)
@@ -223,7 +224,12 @@ export class SimulatorComponent implements OnInit {
         (response: ResponsePlazos) => {
           if (!response.error) {
             this.plazos = response.plazos;
+            this.plazoMaximo = this.plazos[ this.plazos.length - 1 ]
           } else {
+            if(response.idError == 1)
+            {
+              this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
+            }
             this.mostrarMensajeError(response.mensaje);
           }
         }

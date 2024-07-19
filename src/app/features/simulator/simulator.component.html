@@ -93,8 +93,18 @@
               </div>
 
               <!-- Plazos -->
-              <div class="flex flex-col">
-                <label for="plazo" class="mb-2">Plazos (Meses)</label>
+              <div class="flex flex-col relative">
+                <label for="plazo" class="mb-2 flex items-center"> Plazos (Meses)
+                  <div class="relative ml-2">
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
+                      data-tooltip-target="tooltip-plazos">help</span>
+                    <div id="tooltip-plazos" role="tooltip"
+                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-12 left-1/2 transform -translate-x-1/2">
+                      El plazo no debe ser superior a {{ plazoMaximo }} meses.  
+                      <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                  </div>
+                </label>
                 <select id="plazo" formControlName="plazo" class="p-2 border rounded">
                   <option value="">Selecciona un plazo</option>
                   <option *ngFor="let plazo of plazos" [value]="plazo">{{ plazo }}</option>
@@ -113,8 +123,8 @@
                     <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
                       data-tooltip-target="tooltip-beneficiario">help</span>
                     <div id="tooltip-fecha-beneficiario" role="tooltip"
-                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-16 left-1/2 transform -translate-x-1/2">
-                      Falta texto beneficiario
+                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-18 left-1/2 transform -translate-x-1/2">
+                      Marca Si, si la póliza que estás tomando ampara una obligación crediticia a nombre de un tercero
                       <div class="tooltip-arrow" data-popper-arrow></div>
                     </div>
                   </div>
@@ -140,7 +150,7 @@
               </div>
               <div class="flex items-baseline">
                 <span class="material-symbols-outlined mr-2">info</span>
-                <label class="label-info">Para modificar el cálculo debes seleccionar el botón "Restablecer".</label>
+                <label class="label-info">Para modificar el cálculo debes seleccionar el botón "Restablecer valores".</label>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -237,7 +247,7 @@
                   <span>
                     Acepto -
                     <a id="linkDescarga"
-                      (click)="descargarDocumento('/src/assets/docs/TERMINOS Y CONDICIONES DE USO Crediestado.pdf', 'TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB Crediestado.pdf')"
+                      (click)="descargarDocumento('assets/docs/TERMINOS Y CONDICIONES DE USO Crediestado.pdf', 'TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">
                       Términos y Condiciones de Uso
                     </a>
@@ -250,7 +260,7 @@
                   <span>
                     Acepto -
                     <a id="linkDescarga"
-                      (click)="descargarDocumento('/src/assets/docs/POLITICA DE PRIVACIDAD Y PROTECCION DE DATOS Crediestado.pdf', 'POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS Crediestado.pdf')"
+                      (click)="descargarDocumento('assets/docs/POLITICA DE PRIVACIDAD Y PROTECCION DE DATOS Crediestado.pdf', 'POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">
                       Política de Privacidad y tratamiento de datos personales
                     </a>

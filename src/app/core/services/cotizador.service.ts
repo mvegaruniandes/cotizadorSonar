@@ -11,7 +11,7 @@ import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacio
 export class CotizadorService {
   //private apiUrl = 'https://72.55.177.47/CotizadorCrediestadoBack/api/';
   //private apiUrl = 'https://aplicaciones.crediestado.com.co/OlimpiaApi/api/';
-  private apiUrl = 'https://localhost:7050/api/';
+  private apiUrl = 'https://localhost:44380/api/';
 
   constructor(private http: HttpClient, private storage: StorageService) { }
 
