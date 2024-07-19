@@ -33,16 +33,11 @@
     </div>
     <!-- Valor primer pago -->
     <div class="flex flex-col relative">
-        <label for="resumenValorPrimerPago" class="mb-2 flex items-center">Valor primer pago
+        <label for="resumenValorPrimerPago" class="mb-2 flex items-center">Valor primera cuota
             <span class="material-symbols-outlined text-red-500 ml-2 cursor-pointer"
                 data-tooltip-target="tooltip-inicio-poliza">help</span>
             <div id="tooltipValorPrimerPago" role="tooltip"
-                class="absolute z-10 invisible inline-block w-56 px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -top-10 left-1/2 transform -translate-x-1/2">
-                Pólizas que superen el inicio de vigencia entre 46 y 60 días requerirán del 25% del valor de la póliza
-                como
-                primer pago. Si superan el inicio de vigencia entre 61 y 75 días requerirán del 30% del valor de la
-                póliza
-                como primer pago.
+                class="absolute z-10 invisible inline-block w-56 px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -top-10 left-1/2 transform -translate-x-1/2">               
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
         </label>
@@ -53,7 +48,7 @@
     </div>
     <!-- Cuotas restantes -->
     <div class="flex flex-col">
-        <label for="resumenCuotasRestantes" class="mb-2">Cuotas restantes</label>
+        <label for="resumenCuotasRestantes" class="mb-2">Número cuotas mensuales faltantes</label>
     </div>
     <div class="flex flex-col">
         <label for="resumenCuotasRestantesValor" class="mb-2 label-valor">{{ resumenCredito.cuotasRestantes }}</label>

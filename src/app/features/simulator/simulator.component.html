@@ -36,7 +36,7 @@
 
               <!-- Valor póliza -->
               <div class="flex flex-col">
-                <label for="valorPoliza" class="mb-2">Valor póliza</label>
+                <label for="valorPoliza" class="mb-2">Valor de póliza</label>
                 <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded"
                   (input)="onInputChangeValorPoliza($event)" placeholder="$ Ingresa el valor" />
                 <div
@@ -49,9 +49,10 @@
               <!-- Inicio póliza -->
               <div class="flex flex-col relative">
                 <label for="fechaInicioPoliza" class="mb-2 flex items-center">
-                  Fecha inicio póliza
+                  Fecha inicio de póliza
                   <div class="relative ml-2">
-                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover" data-tooltip-target="tooltip-inicio-poliza">help</span>
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
+                      data-tooltip-target="tooltip-inicio-poliza">help</span>
                     <div id="tooltip-inicio-poliza" role="tooltip"
                       class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip left-1/2 transform -translate-x-1/2">
                       Fecha en la que inicia la póliza.
@@ -71,9 +72,10 @@
               <!-- Fecha legalización -->
               <div class="flex flex-col relative">
                 <label for="fechaLegalizacion" class="mb-2 flex items-center">
-                  Fecha legalización
+                  Fecha esperada de desembolso
                   <div class="relative ml-2">
-                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover" data-tooltip-target="tooltip-fecha-legalizacion">help</span>
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
+                      data-tooltip-target="tooltip-fecha-legalizacion">help</span>
                     <div id="tooltip-fecha-legalizacion" role="tooltip"
                       class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-16 left-1/2 transform -translate-x-1/2">
                       Fecha estimada de la radicación completa de la solicitud de financiación.
@@ -81,15 +83,18 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()" class="p-2 border rounded" />
-                <div *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched" class="text-red-500 text-xs font-bold">
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
+                  class="p-2 border rounded" />
+                <div
+                  *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched"
+                  class="text-red-500 text-xs font-bold">
                   Este campo es obligatorio.
                 </div>
-              </div>                                 
+              </div>
 
               <!-- Plazos -->
               <div class="flex flex-col">
-                <label for="plazo" class="mb-2">Plazos</label>
+                <label for="plazo" class="mb-2">Plazos (Meses)</label>
                 <select id="plazo" formControlName="plazo" class="p-2 border rounded">
                   <option value="">Selecciona un plazo</option>
                   <option *ngFor="let plazo of plazos" [value]="plazo">{{ plazo }}</option>
@@ -102,7 +107,18 @@
 
               <!-- Tienes beneficiario oneroso -->
               <div class="flex flex-col">
-                <label class="mb-2">¿Tienes beneficiario oneroso?</label>
+                <label class="mb-2 flex items-center">
+                  ¿Tienes beneficiario oneroso?
+                  <div class="relative ml-2">
+                    <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
+                      data-tooltip-target="tooltip-beneficiario">help</span>
+                    <div id="tooltip-fecha-beneficiario" role="tooltip"
+                      class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-16 left-1/2 transform -translate-x-1/2">
+                      Falta texto beneficiario
+                      <div class="tooltip-arrow" data-popper-arrow></div>
+                    </div>
+                  </div>
+                </label>
                 <div class="flex items-center">
                   <input type="radio" id="beneficiarioSi" formControlName="beneficiario" value="true" class="mr-2" />
                   <label for="beneficiarioSi" class="mr-4">Sí</label>
@@ -120,11 +136,11 @@
             <div class="container mt-4 px-6 py-2">
               <div class="flex items-baseline mb-4">
                 <span class="material-symbols-outlined mr-2">info</span>
-                <label class="label-info">Antes de calcular recuerde diligenciar todos los campos.</label>
+                <label class="label-info">Antes de calcular recuerda diligenciar todos los campos.</label>
               </div>
               <div class="flex items-baseline">
                 <span class="material-symbols-outlined mr-2">info</span>
-                <label class="label-info">Para modificar el cálculo debe seleccionar el botón "Restablecer".</label>
+                <label class="label-info">Para modificar el cálculo debes seleccionar el botón "Restablecer".</label>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,8 +169,7 @@
             </div>
             <div class="flex items-baseline">
               <span class="material-symbols-outlined mr-2">info</span>
-              <label class="label-info">Esta cotización asume que realizas el primer pago en cuentas de
-                Crediestado.</label>
+              <label class="label-info">Cada uno de los pagos a realizar deben ser efectuados a Crediestado.</label>
             </div>
           </div>
 
@@ -163,12 +178,6 @@
           <!---->
           <div class="container py-2">
             <div class="flex items-baseline mb-4">
-              <span class="material-symbols-outlined mr-2">info</span>
-              <label class="label-info">Pólizas que superen el inicio de vigencia entre 46 y 60 días requerirán del 20%
-                del valor de la póliza como primer pago. Si superan el inicio de vigencia entre 61 y 75 días requerirán
-                del 35% del valor de la póliza como primer pago.</label>
-            </div>
-            <div class="flex items-baseline">
               <span class="material-symbols-outlined mr-2">info</span>
               <label class="label-info">Si vas a realizar un primer pago mayor al valor de la cotización marca
                 Si.</label>
@@ -227,8 +236,9 @@
                   <input type="checkbox" id="aceptoTerminos" class="checkbox mr-2" formControlName="aceptoTerminos" />
                   <span>
                     Acepto -
-                    <a id="linkDescarga" href="~/Files/TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB CREDIESTADO.pdf"
-                      download="TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB CREDIESTADO.pdf" class="text-purple-link">
+                    <a id="linkDescarga"
+                      (click)="descargarDocumento('/src/assets/docs/TERMINOS Y CONDICIONES DE USO Crediestado.pdf', 'TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB Crediestado.pdf')"
+                      class="text-purple-link cursor-pointer">
                       Términos y Condiciones de Uso
                     </a>
                   </span>
@@ -239,8 +249,9 @@
                   <input type="checkbox" id="aceptoPolitica" class="checkbox mr-2" formControlName="aceptoPolitica" />
                   <span>
                     Acepto -
-                    <a id="linkDescarga" href="~/Files/POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS CREDIESTADO.pdf"
-                      download="POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS CREDIESTADO.pdf" class="text-purple-link">
+                    <a id="linkDescarga"
+                      (click)="descargarDocumento('/src/assets/docs/POLITICA DE PRIVACIDAD Y PROTECCION DE DATOS Crediestado.pdf', 'POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS Crediestado.pdf')"
+                      class="text-purple-link cursor-pointer">
                       Política de Privacidad y tratamiento de datos personales
                     </a>
                   </span>

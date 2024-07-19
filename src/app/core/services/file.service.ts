@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 })
 export class FileService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   base64ToBlob(base64: string, contentType: string): Blob {
     const byteCharacters = atob(base64);
@@ -27,5 +27,17 @@ export class FileService {
     }
 
     return new Blob(byteArrays, { type: contentType });
+  }
+
+  downloadFile(ruta: string, nombre: string) {
+    const url = ruta;
+    this.http.get(url, { responseType: 'blob' }).subscribe((blob) => {
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = nombre;
+      link.click();
+      window.URL.revokeObjectURL(downloadUrl);
+    });
   }
 }

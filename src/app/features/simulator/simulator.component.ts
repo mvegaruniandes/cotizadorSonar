@@ -6,6 +6,7 @@ import { ResponseCotizacion, ResponsePlazos, ResponseProductos } from '../../cor
 import { StorageService } from '../../core/services/storage.service';
 import { SpinnerService } from '../../core/services/spinner.service';
 import { SwitchModalService } from '../../core/services/switch-modal.service';
+import { FileService } from '../../core/services/file.service';
 
 @Component({
   selector: 'app-simulator',
@@ -20,6 +21,8 @@ export class SimulatorComponent implements OnInit {
   simulacionActiva: boolean = false;
   simulacionRecalculada: boolean = false;
 
+  isFormDisabled: boolean = false;
+
   cotizadorForm: FormGroup;
   pagoMayorForm: FormGroup;
   terminosPoliticaForm: FormGroup;
@@ -30,20 +33,21 @@ export class SimulatorComponent implements OnInit {
   planPagos: CalcularCotizacionPlanPagos[] = [];
   resumenCredito: CalcularCotizacionResumen = calcularCotizacionVacia;
 
-  datosModal: ModalPersonalizacion = {idSimulacion: 0, idFormulario: 0, titulo: '', tituloBoton: '' };
+  datosModal: ModalPersonalizacion = { idSimulacion: 0, idFormulario: 0, titulo: '', tituloBoton: '' };
 
   constructor(private fb: FormBuilder,
     private spinner: SpinnerService,
+    private fileService: FileService,
     private cotizadorService: CotizadorService,
     private storageService: StorageService,
     private switchModalService: SwitchModalService) {
     this.cotizadorForm = this.fb.group({
-      producto: ['', Validators.required],
-      valorPoliza: ['', [Validators.required, this.amountValidator]],
-      fechaInicioPoliza: ['', Validators.required],
-      fechaLegalizacion: ['', Validators.required],
-      beneficiario: ['', Validators.required],
-      plazo: ['', Validators.required]
+      producto: [{ value: '', disabled: this.isFormDisabled }, Validators.required],
+      valorPoliza: [{ value: '', disabled: this.isFormDisabled }, [Validators.required, this.amountValidator]],
+      fechaInicioPoliza: [{ value: '', disabled: this.isFormDisabled }, Validators.required],
+      fechaLegalizacion: [{ value: '', disabled: this.isFormDisabled }, Validators.required],
+      beneficiario: [{ value: '', disabled: this.isFormDisabled }, Validators.required],
+      plazo: [{ value: '', disabled: this.isFormDisabled }, Validators.required]
     });
     this.pagoMayorForm = this.fb.group({
       pago: ['false', Validators.required],
@@ -58,7 +62,7 @@ export class SimulatorComponent implements OnInit {
   ngOnInit(): void {
     this.spinner.showSpinner();
     this.storageService.clear();
-    
+
     this.switchModalService.$modalPersonalize.subscribe((value) => {
       this.modalSwitchPersonalize = value;
     });
@@ -73,7 +77,7 @@ export class SimulatorComponent implements OnInit {
   //Función para validar el valor mínimo de la póliza
   amountValidator(control: any) {
     const value = parseInt(control.value.replace(/[^\d]/g, ''), 10);
-    return value > 400000 ? null : { minAmount: true };
+    return value >= 400000 ? null : { minAmount: true };
   };
 
   //Función para parsear el valor de la póliza
@@ -159,7 +163,7 @@ export class SimulatorComponent implements OnInit {
       this.cotizadorService.calcularCotizacion(data).subscribe(
         (response: ResponseCotizacion) => {
           if (!response.error) {
-            this.simulacionActiva = true; //Variable de control para mostrar la simulación
+            this.setFormState(true); //Método de control para mostrar la simulación
             this.planPagos = response.calcularCotizacionPlanPagosDTO;
             this.resumenCredito = response.calcularCotizacionResumenDTO;
           } else {
@@ -178,7 +182,7 @@ export class SimulatorComponent implements OnInit {
       const valorMayorPago = this.convertCurrencyStringToNumber(valorPago);
       // Validar que el pago sea mayor a la primera cuota actual
       if (valorMayorPago > this.resumenCredito.valorPrimeraCuota) {
-        this.simulacionActiva = false;
+        this.setFormState(false); //Método de control para mostrar la simulación
         this.calcularCotizacion(valorMayorPago);
       } else {
         const valorPrimeraCuotaActual = this.convertNumberToCurrencyString(this.resumenCredito.valorPrimeraCuota);
@@ -259,7 +263,7 @@ export class SimulatorComponent implements OnInit {
           };
           break;
         default:
-          this.datosModal = {idSimulacion: this.resumenCredito.idSimulacionCredito, idFormulario: id, titulo: '', tituloBoton: '' };
+          this.datosModal = { idSimulacion: this.resumenCredito.idSimulacionCredito, idFormulario: id, titulo: '', tituloBoton: '' };
           break;
       }
 
@@ -277,5 +281,18 @@ export class SimulatorComponent implements OnInit {
   mostrarMensajeError(mensaje: string) {
     this.mensajeAlerta = mensaje;
     this.switchModalService.$modalAlert.emit(true);
+  }
+
+  private setFormState(isDisabled: boolean) {
+    this.simulacionActiva = isDisabled;
+    if (isDisabled) {
+      this.cotizadorForm.disable();
+    } else {
+      this.cotizadorForm.enable();
+    }
+  }
+
+  descargarDocumento(ruta: string, nombre: string) {
+    this.fileService.downloadFile(ruta, nombre);
   }
 }
