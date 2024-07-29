@@ -151,7 +151,6 @@ export class SimulatorComponent implements OnInit {
 
       let data = {
         "idRamo": Number(this.cotizadorForm.value.producto),
-        "idPlan": 1,
         "fechaInicioVigencia": this.cotizadorForm.value.fechaInicioPoliza,
         "fechaLegalizacion": this.cotizadorForm.value.fechaLegalizacion,
         "plazo": Number(this.cotizadorForm.value.plazo),
@@ -187,11 +186,11 @@ export class SimulatorComponent implements OnInit {
         this.calcularCotizacion(valorMayorPago);
       } else {
         const valorPrimeraCuotaActual = this.convertNumberToCurrencyString(this.resumenCredito.valorPrimeraCuota);
-        this.mostrarMensajeError(`El valor del primer pago debe ser mayor a ${valorPrimeraCuotaActual}`);
+        this.mostrarMensajeError(`El valor del primer pago debe ser mayor a ${valorPrimeraCuotaActual}.`);
       }
 
     } else {
-      this.mostrarMensajeError("");
+      this.mostrarMensajeError("Ingresa un valor en mayor pago para recalculcar la cotización.");
     }
   }
 
@@ -205,6 +204,23 @@ export class SimulatorComponent implements OnInit {
         }
       }
     )
+  }
+
+  validarFechaInicioPoliza(){
+    const fechaHoy = new Date();
+    const fechaInicioPoliza = new Date(this.cotizadorForm.value.fechaInicioPoliza);
+
+    const diferencia = this.calcularDiferenciaDias(fechaInicioPoliza, fechaHoy);
+    
+    if(diferencia > 30 && diferencia <= 90){
+      this.mostrarMensajeError('Favor comuníquese con su asesor comercial.');
+    }
+
+    if(diferencia > 90){
+      this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de legalización no puede ser mayor a 90 días.');
+    }
+
+    this.calcularPlazos();
   }
 
   calcularPlazos(): void {
@@ -275,7 +291,7 @@ export class SimulatorComponent implements OnInit {
 
       this.switchModalService.$modalPersonalize.emit(true);
     } else {
-      this.mostrarMensajeError('Debes aceptar los Términos y Condiciones de Uso y la Política de Tratamiento de Datos para continuar');
+      this.mostrarMensajeError('Debes aceptar los Términos y Condiciones de Uso y la Política de Tratamiento de Datos para continuar.');
     }
   }
 
@@ -300,5 +316,14 @@ export class SimulatorComponent implements OnInit {
 
   descargarDocumento(ruta: string, nombre: string) {
     this.fileService.downloadFile(ruta, nombre);
+  }
+
+  calcularDiferenciaDias(fecha1: Date, fecha2: Date) {    
+    // Convertir ambas fechas a solo fechas sin horas para evitar problemas de cálculo
+    const fechaUno = new Date(fecha1.getFullYear(), fecha1.getMonth(), fecha1.getDate());
+    const fechaDos = new Date(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate());
+
+    const diffTime = Math.abs(fechaUno.getTime() - fechaDos.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 }

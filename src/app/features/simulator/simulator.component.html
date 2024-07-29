@@ -37,7 +37,7 @@
               <!-- Valor póliza -->
               <div class="flex flex-col">
                 <label for="valorPoliza" class="mb-2">Valor de póliza</label>
-                <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded"
+                <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded" autocomplete="off"
                   (input)="onInputChangeValorPoliza($event)" placeholder="$ Ingresa el valor" />
                 <div
                   *ngIf="cotizadorForm.controls['valorPoliza'].invalid && cotizadorForm.controls['valorPoliza'].touched"
@@ -60,7 +60,7 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza" (blur)="calcularPlazos()"
+                <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza" (blur)="validarFechaInicioPoliza()" autocomplete="off"
                   class="p-2 border rounded" />
                 <div
                   *ngIf="cotizadorForm.controls['fechaInicioPoliza'].invalid && cotizadorForm.controls['fechaInicioPoliza'].touched"
@@ -83,7 +83,7 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()" autocomplete="off"
                   class="p-2 border rounded" />
                 <div
                   *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched"
@@ -179,7 +179,7 @@
             </div>
             <div class="flex items-baseline">
               <span class="material-symbols-outlined mr-2">info</span>
-              <label class="label-info">Cada uno de los pagos a realizar deben ser efectuados a Crediestado.</label>
+              <label class="label-info">Cada uno de los pagos a realizar Deben ser efectuadas exclusivamente a Crediestado.</label>
             </div>
           </div>
 
@@ -293,13 +293,13 @@
                 </button>
                 <span class="mt-2 text-center text-sm">Continua el proceso</span>
               </div>
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-1 gap-1"></div>
-        </div>
+            </div>           
+          </div>               
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-1"></div>       
+        </div>   
         <div class="container mx-auto p-6">
           <app-accordion-info></app-accordion-info>
-        </div>
+        </div>     
       </div>
     </div>
   </div>

@@ -7,17 +7,17 @@
         <label for="resumenFechaCalculoValor" class="mb-2 label-valor capitalize">{{
             resumenCredito.fechaProcesoCotizacion | date: 'EEEE, dd MMMM yyyy' }}</label>
     </div>
-    <!-- Tasa anual -->
+    <!-- Tasa Efectiva Anual -->
     <div class="flex flex-col">
-        <label for="resumenTasaAnual" class="mb-2">Tasa anual</label>
+        <label for="resumenTasaAnual" class="mb-2">Tasa Efectiva Anual</label>
     </div>
     <div class="flex flex-col">
         <label for="resumenTasaAnualValor" class="mb-2 label-valor">{{ resumenCredito.tasaEfectivoAnual |
             percentageFormat}}</label>
     </div>
-    <!-- Tasa mensual -->
+    <!-- Tasa Mes Vencida -->
     <div class="flex flex-col">
-        <label for="resumenTasaMensual" class="mb-2">Tasa mensual</label>
+        <label for="resumenTasaMensual" class="mb-2">Tasa Mes Vencida</label>
     </div>
     <div class="flex flex-col">
         <label for="resumenTasaMensualValor" class="mb-2 label-valor">{{ resumenCredito.tasaMesVencido |
@@ -32,15 +32,8 @@
             numberFormat }}</label>
     </div>
     <!-- Valor primer pago -->
-    <div class="flex flex-col relative">
-        <label for="resumenValorPrimerPago" class="mb-2 flex items-center">Valor primera cuota
-            <span class="material-symbols-outlined text-red-500 ml-2 cursor-pointer"
-                data-tooltip-target="tooltip-inicio-poliza">help</span>
-            <div id="tooltipValorPrimerPago" role="tooltip"
-                class="absolute z-10 invisible inline-block w-56 px-4 py-3 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -top-10 left-1/2 transform -translate-x-1/2">               
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-        </label>
+    <div class="flex flex-col">
+        <label for="resumenValorPrimerPago" class="mb-2">Valor primera cuota</label>
     </div>
     <div class="flex flex-col">
         <label for="resumenValorPrimerPagoValor" class="mb-2 label-valor">{{ resumenCredito.valorPrimeraCuota |

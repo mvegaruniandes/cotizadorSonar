@@ -96,6 +96,9 @@ export class PersonalizeSimulationModalComponent {
       }
 
       this.spinner.hideSpinner();
+    }else{
+      this.tomadorForm.markAllAsTouched();
+      this.mostrarMensajeError('Campos pendientes de diligenciamiento.');
     }
   }
 

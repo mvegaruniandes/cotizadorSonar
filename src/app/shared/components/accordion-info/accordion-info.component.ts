@@ -6,9 +6,9 @@ import { Component } from '@angular/core';
   styleUrl: './accordion-info.component.scss'
 })
 export class AccordionInfoComponent {
-  isOpen = false;
+  isOpen = true;
 
   togglePanel() {
-    this.isOpen = !this.isOpen;
+    //this.isOpen = !this.isOpen;
   }
 }
