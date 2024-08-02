@@ -28,22 +28,20 @@
                   <option value="">Elige el producto que deseas cotizar</option>
                   <option *ngFor="let ramo of ramos" [value]="ramo.id">{{ ramo.nombre }}</option>
                 </select>
-                <div *ngIf="cotizadorForm.controls['producto'].invalid && cotizadorForm.controls['producto'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio.
-                </div>
+                @if(cotizadorForm.controls['producto'].invalid && cotizadorForm.controls['producto'].touched){
+                <app-input-message-error></app-input-message-error>
+                }
               </div>
 
               <!-- Valor póliza -->
               <div class="flex flex-col">
                 <label for="valorPoliza" class="mb-2">Valor de póliza</label>
-                <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded" autocomplete="off"
-                  (input)="onInputChangeValorPoliza($event)" placeholder="$ Ingresa el valor" />
-                <div
-                  *ngIf="cotizadorForm.controls['valorPoliza'].invalid && cotizadorForm.controls['valorPoliza'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio. El valor de la póliza debe ser mínimo de $400.000.
-                </div>
+                <input id="valorPoliza" type="text" formControlName="valorPoliza" class="p-2 border rounded"
+                  autocomplete="off" (input)="onInputChangeValorPoliza($event)" placeholder="$ Ingresa el valor" />
+                @if(cotizadorForm.controls['valorPoliza'].invalid && cotizadorForm.controls['valorPoliza'].touched){
+                <app-input-message-error
+                  [mensaje]="'Este campo es obligatorio. El valor de la póliza debe ser mínimo de $400.000.'"></app-input-message-error>
+                }
               </div>
 
               <!-- Inicio póliza -->
@@ -60,13 +58,12 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza" (blur)="validarFechaInicioPoliza()" autocomplete="off"
-                  class="p-2 border rounded" />
-                <div
-                  *ngIf="cotizadorForm.controls['fechaInicioPoliza'].invalid && cotizadorForm.controls['fechaInicioPoliza'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio.
-                </div>
+                <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza"
+                  (blur)="validarFechaInicioPoliza()" autocomplete="off" class="p-2 border rounded" />
+                @if(cotizadorForm.controls['fechaInicioPoliza'].invalid &&
+                cotizadorForm.controls['fechaInicioPoliza'].touched){
+                <app-input-message-error></app-input-message-error>
+                }
               </div>
 
               <!-- Fecha legalización -->
@@ -83,13 +80,12 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()" autocomplete="off"
-                  class="p-2 border rounded" />
-                <div
-                  *ngIf="cotizadorForm.controls['fechaLegalizacion'].invalid && cotizadorForm.controls['fechaLegalizacion'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio.
-                </div>
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
+                  autocomplete="off" class="p-2 border rounded" />
+                @if(cotizadorForm.controls['fechaLegalizacion'].invalid &&
+                cotizadorForm.controls['fechaLegalizacion'].touched){
+                <app-input-message-error></app-input-message-error>
+                }
               </div>
 
               <!-- Plazos -->
@@ -100,7 +96,7 @@
                       data-tooltip-target="tooltip-plazos">help</span>
                     <div id="tooltip-plazos" role="tooltip"
                       class="absolute z-20 invisible inline-block w-48 h-auto px-2 py-2 text-xs font-medium text-white bg-gray-900 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 tooltip -bottom-12 left-1/2 transform -translate-x-1/2">
-                      El plazo no debe ser superior a {{ plazoMaximo }} meses.  
+                      El plazo no debe ser superior a {{ plazoMaximo }} meses.
                       <div class="tooltip-arrow" data-popper-arrow></div>
                     </div>
                   </div>
@@ -109,10 +105,9 @@
                   <option value="">Selecciona un plazo</option>
                   <option *ngFor="let plazo of plazos" [value]="plazo">{{ plazo }}</option>
                 </select>
-                <div *ngIf="cotizadorForm.controls['plazo'].invalid && cotizadorForm.controls['plazo'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio.
-                </div>
+                @if(cotizadorForm.controls['plazo'].invalid && cotizadorForm.controls['plazo'].touched){
+                <app-input-message-error></app-input-message-error>
+                }
               </div>
 
               <!-- Tienes beneficiario oneroso -->
@@ -135,11 +130,9 @@
                   <input type="radio" id="beneficiarioNo" formControlName="beneficiario" value="false" class="mr-2" />
                   <label for="beneficiarioNo">No</label>
                 </div>
-                <div
-                  *ngIf="cotizadorForm.controls['beneficiario'].invalid && cotizadorForm.controls['beneficiario'].touched"
-                  class="text-red-500 text-xs font-bold">
-                  Este campo es obligatorio.
-                </div>
+                @if(cotizadorForm.controls['beneficiario'].invalid && cotizadorForm.controls['beneficiario'].touched){
+                <app-input-message-error></app-input-message-error>
+                }
               </div>
             </div>
             <!-- Información -->
@@ -150,7 +143,8 @@
               </div>
               <div class="flex items-baseline">
                 <span class="material-symbols-outlined mr-2">info</span>
-                <label class="label-info">Para modificar el cálculo debes seleccionar el botón "Restablecer valores".</label>
+                <label class="label-info">Para modificar el cálculo debes seleccionar el botón "Restablecer
+                  valores".</label>
               </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -165,7 +159,8 @@
             </div>
           </form>
         </div>
-        <div *ngIf="simulacionActiva" class="container mx-auto p-6">
+        @if(simulacionActiva){
+        <div class="container mx-auto p-6">
           <!-- Información - Resumen de la cotización -->
           <h2 class="font-bold mb-3">Resumen de la cotización</h2>
           <!---->
@@ -179,7 +174,8 @@
             </div>
             <div class="flex items-baseline">
               <span class="material-symbols-outlined mr-2">info</span>
-              <label class="label-info">Cada uno de los pagos a realizar Deben ser efectuadas exclusivamente a Crediestado.</label>
+              <label class="label-info">Cada uno de los pagos a realizar Deben ser efectuadas exclusivamente a
+                Crediestado.</label>
             </div>
           </div>
 
@@ -293,13 +289,14 @@
                 </button>
                 <span class="mt-2 text-center text-sm">Continua el proceso</span>
               </div>
-            </div>           
-          </div>               
-          <div class="grid grid-cols-1 md:grid-cols-1 gap-1"></div>       
-        </div>   
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-1"></div>
+        </div>
+        }
         <div class="container mx-auto p-6">
           <app-accordion-info></app-accordion-info>
-        </div>     
+        </div>
       </div>
     </div>
   </div>

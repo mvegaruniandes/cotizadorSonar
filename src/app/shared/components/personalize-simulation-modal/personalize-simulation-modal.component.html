@@ -22,59 +22,71 @@
                             <option value="">Elige un tipo</option>
                             <option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">{{ tipo.nombre }}</option>
                         </select>
-                        <div *ngIf="tomadorForm.controls['tipoDocumento'].invalid && tomadorForm.controls['tipoDocumento'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                        @if(tomadorForm.controls['tipoDocumento'].invalid &&
+                        tomadorForm.controls['tipoDocumento'].touched){
+                        <app-input-message-error></app-input-message-error>
+                        }
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="numeroIdentificacion"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Número de
                             identificación</label>
-                        <input type="text" id="numeroIdentificacion" formControlName="numeroIdentificacion" autocomplete="off"
+                        <input type="text" id="numeroIdentificacion" formControlName="numeroIdentificacion"
+                            autocomplete="off"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Ingresa la identificación" (input)="onInputChangeNumeroIdentificacion($event)">
-                        <div *ngIf="tomadorForm.controls['numeroIdentificacion'].invalid && tomadorForm.controls['numeroIdentificacion'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                        @if(tomadorForm.controls['numeroIdentificacion'].invalid &&
+                        tomadorForm.controls['numeroIdentificacion'].touched ||
+                        tomadorForm.controls['numeroIdentificacion'].dirty){
+                        @if(tomadorForm.controls['numeroIdentificacion'].errors?.['required']){
+                        <app-input-message-error></app-input-message-error>
+                        }
+                        @if(tomadorForm.controls['numeroIdentificacion'].errors?.['pattern']){
+                        <app-input-message-error
+                            [mensaje]="'El formato del NIT es incorrecto.'"></app-input-message-error>
+                        }
+                        }
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="nombreTomador"
-                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre del
-                            tomador</label>
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{labelPrimerApellido}}</label>
                         <input type="text" id="nombreTomador" formControlName="nombreTomador" autocomplete="off"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Ingresa el nombre tomador">
-                        <div *ngIf="tomadorForm.controls['nombreTomador'].invalid && tomadorForm.controls['nombreTomador'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                            placeholder="{{placeholderPrimerApellido}}">
+                        @if(tomadorForm.controls['nombreTomador'].invalid &&
+                        tomadorForm.controls['nombreTomador'].touched){
+                        <app-input-message-error></app-input-message-error>
+                        }
                     </div>
+                    @if(!esPersonaJuridica)
+                    {
                     <div class="col-span-2 sm:col-span-1">
                         <label for="primerApellidoTomador"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Primer apellido
                             tomador</label>
-                        <input type="text" id="primerApellidoTomador" formControlName="primerApellidoTomador" autocomplete="off"
+                        <input type="text" id="primerApellidoTomador" formControlName="primerApellidoTomador"
+                            autocomplete="off"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Ingresa el primer apellido tomador">
-                        <div *ngIf="tomadorForm.controls['primerApellidoTomador'].invalid && tomadorForm.controls['primerApellidoTomador'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                        @if(tomadorForm.controls['primerApellidoTomador'].invalid &&
+                        tomadorForm.controls['primerApellidoTomador'].touched){
+                        <app-input-message-error></app-input-message-error>
+                        }
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="segundoApellidoTomador"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Segundo apellido
                             tomador</label>
-                        <input type="text" id="segundoApellidoTomador" formControlName="segundoApellidoTomador" autocomplete="off"
+                        <input type="text" id="segundoApellidoTomador" formControlName="segundoApellidoTomador"
+                            autocomplete="off"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Ingresa el segundo apellido tomador">
-                        <div *ngIf="tomadorForm.controls['segundoApellidoTomador'].invalid && tomadorForm.controls['segundoApellidoTomador'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                        @if(tomadorForm.controls['segundoApellidoTomador'].invalid &&
+                        tomadorForm.controls['segundoApellidoTomador'].touched){
+                        <app-input-message-error></app-input-message-error>
+                        }
                     </div>
+                    }
                     <div class="col-span-2 sm:col-span-1" [ngClass]="{'hidden': ocultarCorreo}">
                         <label for="correoTomador"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Correo del
@@ -82,10 +94,10 @@
                         <input type="text" id="correoTomador" formControlName="correoTomador" autocomplete="off"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                             placeholder="Ingresa el correo tomador">
-                        <div *ngIf="tomadorForm.controls['correoTomador'].invalid && tomadorForm.controls['correoTomador'].touched"
-                            class="text-red-500 text-xs font-bold">
-                            Este campo es obligatorio.
-                        </div>
+                        @if(tomadorForm.controls['correoTomador'].invalid &&
+                        tomadorForm.controls['correoTomador'].touched){
+                        <app-input-message-error></app-input-message-error>
+                        }
                     </div>
                 </div>
                 <div class="grid gap-1 grid-cols-1 border-t">

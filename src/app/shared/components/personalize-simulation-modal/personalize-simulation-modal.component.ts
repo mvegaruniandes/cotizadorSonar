@@ -23,6 +23,10 @@ export class PersonalizeSimulationModalComponent {
 
   ocultarCorreo: boolean = true;
 
+  labelPrimerApellido: string = 'Nombre del tomador';
+  placeholderPrimerApellido: string = 'Ingresa el nombre tomador';
+  esPersonaJuridica: boolean = false;
+
   constructor(private fb: FormBuilder,
     private router: Router,
     private toast: NgToastService,
@@ -43,8 +47,8 @@ export class PersonalizeSimulationModalComponent {
 
   ngOnInit(): void {
     this.configurarValidadorCorreo();
-    this.precargarInfoTomador();
     this.obtenerListadoTiposDocumento();
+    this.precargarInfoTomador();
   }
 
   obtenerListadoTiposDocumento(): void {
@@ -52,6 +56,7 @@ export class PersonalizeSimulationModalComponent {
       (response: ResponseTipoDocumento) => {
         if (!response.error) {
           this.tiposDocumento = response.tiposDocumento;
+          this.onChangeTipoDocumento();
         } else {
           this.mostrarMensajeError(response.mensaje);
         }
@@ -59,9 +64,59 @@ export class PersonalizeSimulationModalComponent {
     )
   }
 
-  //Función para parsear el valor mayor primera cuota
+  onChangeTipoDocumento() {
+    this.tomadorForm.get('tipoDocumento')?.valueChanges.subscribe(value => {
+      this.validarTipoPersona(value);
+    });
+  }
+
+  validarTipoPersona(value: any) {
+    const primerApellidoTomadorControl = this.tomadorForm.get('primerApellidoTomador');
+    const segundoApellidoTomadorControl = this.tomadorForm.get('segundoApellidoTomador');
+
+    if (value == 2) {
+      this.labelPrimerApellido = 'Razón social';
+      this.placeholderPrimerApellido = 'Ingresa la razón social';
+      this.esPersonaJuridica = true;
+
+      primerApellidoTomadorControl?.setValue('');
+      segundoApellidoTomadorControl?.setValue('');
+      primerApellidoTomadorControl?.clearValidators();
+    } else {
+      this.labelPrimerApellido = 'Nombre del tomador';
+      this.placeholderPrimerApellido = 'Ingresa el nombre tomador';
+      this.esPersonaJuridica = false;
+
+      primerApellidoTomadorControl?.setValidators(Validators.required);
+    }
+
+    this.validacionTipoDocumentoXPersona(value);
+    primerApellidoTomadorControl?.updateValueAndValidity();
+  }
+
+  validacionTipoDocumentoXPersona(value: any) {
+    const numeroIdentificacionControl = this.tomadorForm.get('numeroIdentificacion');
+    numeroIdentificacionControl?.clearValidators();
+
+    if (value == 2) {
+      numeroIdentificacionControl?.setValidators(
+        [Validators.required, Validators.pattern(/^\d{1,10}-\d$/)]
+      );
+    } else {
+      numeroIdentificacionControl?.setValidators(
+        [Validators.required, Validators.pattern('^[0-9]*$')]
+      );
+    }
+    numeroIdentificacionControl?.updateValueAndValidity();
+  }
+
   onInputChangeNumeroIdentificacion(event: any): void {
     let inputValue = event.target.value.replace(/[^\d]/g, '');
+
+    if (this.esPersonaJuridica) {
+      inputValue = event.target.value.replace(/[^\d-]/g, '');
+    }
+
     if (inputValue) {
       this.tomadorForm.get('numeroIdentificacion')?.setValue(inputValue, { emitEvent: false });
     } else {
@@ -96,7 +151,7 @@ export class PersonalizeSimulationModalComponent {
       }
 
       this.spinner.hideSpinner();
-    }else{
+    } else {
       this.tomadorForm.markAllAsTouched();
       this.mostrarMensajeError('Campos pendientes de diligenciamiento.');
     }
@@ -151,8 +206,8 @@ export class PersonalizeSimulationModalComponent {
   }
 
   // Función para habilitar o inhabilitar validador de correo electrónico
-  configurarValidadorCorreo(){
-    if(this.datos.idFormulario == 2){
+  configurarValidadorCorreo() {
+    if (this.datos.idFormulario == 2) {
       this.ocultarCorreo = false;
       const correoControl = this.tomadorForm.get('correoTomador');
 
@@ -171,6 +226,7 @@ export class PersonalizeSimulationModalComponent {
       this.tomadorForm.get('primerApellidoTomador')?.setValue(infoTomador.primerApellidoTomador);
       this.tomadorForm.get('segundoApellidoTomador')?.setValue(infoTomador.segundoApellidoTomador);
       this.tomadorForm.get('correoTomador')?.setValue(infoTomador.correoTomador);
+      this.validarTipoPersona(infoTomador.idTipoDocumento);
     }
   }
 
@@ -188,11 +244,12 @@ export class PersonalizeSimulationModalComponent {
 
   // Función para cerrar la modal
   cerrarModal() {
+    this.guardarInfoTomador();
     this.switchModalService.$modalPersonalize.emit(false);
   }
 
   mostrarMensajeError(mensaje: string) {
-    this.toast.danger(mensaje); 
+    this.toast.danger(mensaje);
   }
 
   mostrarMensaje(mensaje: string) {

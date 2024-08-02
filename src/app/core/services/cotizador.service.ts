@@ -9,9 +9,9 @@ import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacio
   providedIn: 'root'
 })
 export class CotizadorService {
-  //private apiUrl = 'https://72.55.177.47/CotizadorCrediestadoBack/api/';
-  private apiUrl = 'https://aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
-  //private apiUrl = 'https://localhost:7050/api/';
+  //private apiUrl = 'https://dev.aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
+  //private apiUrl = 'https://aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
+  private apiUrl = 'https://localhost:7050/api/';
 
   constructor(private http: HttpClient, private storage: StorageService) { }
 

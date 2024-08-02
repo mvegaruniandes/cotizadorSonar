@@ -18,6 +18,7 @@ import { PersonalizeSimulationModalComponent } from './shared/components/persona
 import { AlertModalComponent } from './shared/components/alert-modal/alert-modal.component';
 import { NgToastModule } from 'ng-angular-popup';
 import { PercentageFormatPipe } from './core/pipes/percentage-format.pipe';
+import { InputMessageErrorComponent } from './shared/components/input-message-error/input-message-error.component';
 
 registerLocaleData(localeEs);
 
@@ -31,7 +32,8 @@ registerLocaleData(localeEs);
     SimulationDatatableComponent,
     CreditSummaryInformationComponent,
     PersonalizeSimulationModalComponent,
-    AlertModalComponent
+    AlertModalComponent,
+    InputMessageErrorComponent
   ],
   imports: [
     BrowserModule,
