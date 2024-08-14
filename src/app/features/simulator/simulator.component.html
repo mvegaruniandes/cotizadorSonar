@@ -59,7 +59,7 @@
                   </div>
                 </label>
                 <input id="fechaInicioPoliza" type="date" formControlName="fechaInicioPoliza"
-                  (blur)="validarFechaInicioPoliza()" autocomplete="off" class="p-2 border rounded" />
+                  (blur)="validarFechasInicioPolizaIngresoCotizador()" autocomplete="off" class="p-2 border rounded" />
                 @if(cotizadorForm.controls['fechaInicioPoliza'].invalid &&
                 cotizadorForm.controls['fechaInicioPoliza'].touched){
                 <app-input-message-error></app-input-message-error>
@@ -67,9 +67,9 @@
               </div>
 
               <!-- Fecha legalización -->
-              <div class="flex flex-col relative">
+              <div class="flex flex-col relative hidden">
                 <label for="fechaLegalizacion" class="mb-2 flex items-center">
-                  Fecha esperada de desembolso
+                  Fecha desembolso
                   <div class="relative ml-2">
                     <span class="material-symbols-outlined cursor-pointer" data-tooltip-trigger="hover"
                       data-tooltip-target="tooltip-fecha-legalizacion">help</span>
@@ -80,8 +80,8 @@
                     </div>
                   </div>
                 </label>
-                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" (blur)="calcularPlazos()"
-                  autocomplete="off" class="p-2 border rounded" />
+                <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" [readonly]="true"
+                  (blur)="validarFechasInicioPolizaLegalizacion()" autocomplete="off" class="p-2 border rounded" />
                 @if(cotizadorForm.controls['fechaLegalizacion'].invalid &&
                 cotizadorForm.controls['fechaLegalizacion'].touched){
                 <app-input-message-error></app-input-message-error>
@@ -150,8 +150,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Botón de enviar -->
               <div class="md:col-span-2 flex justify-center mt-2">
-                <button type="submit" class="px-2 py-2 primary-button mr-4"
-                  [disabled]="habilitarBotonCalcular()">Calcular
+                <button type="submit" class="px-2 py-2 primary-button mr-4">Calcular
                   cotización</button>
                 <button type="button" class="px-4 py-2 secondary-button ml-4" (click)="recargarPagina()">Restablecer
                   valores</button>
@@ -172,10 +171,18 @@
               <label class="label-info">Ten en cuenta que para continuar con la solicitud formal de la financiación,
                 deberás proveer toda la documentación necesaria.</label>
             </div>
-            <div class="flex items-baseline">
+            <div class="flex items-baseline mb-4">
               <span class="material-symbols-outlined mr-2">info</span>
               <label class="label-info">Cada uno de los pagos a realizar Deben ser efectuadas exclusivamente a
                 Crediestado.</label>
+            </div>
+            <div class="flex items-baseline">
+              <span class="material-symbols-outlined mr-2">info</span>
+              <label class="label-info">Ten en cuenta que a partir de la segunda cuota tus pagos pueden ser
+                realizados a través del botón PSE habilitado en nuestra página
+                web <a href="https://crediestado.com.co/">www.crediestado.com.co</a> o a través de las oficinas y
+                corresponsales de Bancolombia convenio
+                20468</label>
             </div>
           </div>
 
@@ -239,22 +246,15 @@
             <form [formGroup]="terminosPoliticaForm">
               <div class="label-group flex items-center ml-5">
                 <div class="flex items-center">
-                  <input type="checkbox" id="aceptoTerminos" class="checkbox mr-2" formControlName="aceptoTerminos" />
+                  <input type="checkbox" id="aceptoTerminosPolitica" class="checkbox mr-2"
+                    formControlName="aceptoTerminosPolitica" />
                   <span>
-                    Acepto -
+                    Acepto los
                     <a id="linkDescarga"
                       (click)="descargarDocumento('assets/docs/TERMINOS Y CONDICIONES DE USO Crediestado.pdf', 'TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">
                       Términos y Condiciones de Uso
-                    </a>
-                  </span>
-                </div>
-              </div>
-              <div class="label-group flex items-center ml-5">
-                <div class="flex items-center">
-                  <input type="checkbox" id="aceptoPolitica" class="checkbox mr-2" formControlName="aceptoPolitica" />
-                  <span>
-                    Acepto -
+                    </a> y la
                     <a id="linkDescarga"
                       (click)="descargarDocumento('assets/docs/POLITICA DE PRIVACIDAD Y PROTECCION DE DATOS Crediestado.pdf', 'POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">

@@ -18,6 +18,7 @@ export interface DatosTomador {
 }
 
 export interface ModalPersonalizacion {
+    idSimulacionOriginal: number,
     idSimulacion: number,
     idFormulario: number,
     titulo: string,

@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CotizadorService } from '../../core/services/cotizador.service';
 import { CalcularCotizacionPlanPagos, CalcularCotizacionResumen, calcularCotizacionVacia, ModalPersonalizacion, Ramo } from '../../core/models/cotizador-models';
-import { ResponseCotizacion, ResponsePlazos, ResponseProductos } from '../../core/models/response';
+import { ResponseCotizacion, ResponseFestivos, ResponsePlazos, ResponseProductos } from '../../core/models/response';
 import { StorageService } from '../../core/services/storage.service';
 import { SpinnerService } from '../../core/services/spinner.service';
 import { SwitchModalService } from '../../core/services/switch-modal.service';
 import { FileService } from '../../core/services/file.service';
+import { DateUtils } from '../../core/utils/date-utils';
+import { add, addDays, addMonths } from 'date-fns';
 
 @Component({
   selector: 'app-simulator',
@@ -27,6 +29,7 @@ export class SimulatorComponent implements OnInit {
   pagoMayorForm: FormGroup;
   terminosPoliticaForm: FormGroup;
 
+  festivos: string[] = [];
   ramos: Ramo[] = [];
   plazos: number[] = [];
   plazoMaximo: number = 11;
@@ -34,7 +37,10 @@ export class SimulatorComponent implements OnInit {
   planPagos: CalcularCotizacionPlanPagos[] = [];
   resumenCredito: CalcularCotizacionResumen = calcularCotizacionVacia;
 
-  datosModal: ModalPersonalizacion = { idSimulacion: 0, idFormulario: 0, titulo: '', tituloBoton: '' };
+  idSimulacionOriginal: number = 0;
+  valorPrimerPagoSimulacionOriginal: number = 0;
+
+  datosModal: ModalPersonalizacion = { idSimulacionOriginal: 0, idSimulacion: 0, idFormulario: 0, titulo: '', tituloBoton: '' };
 
   constructor(private fb: FormBuilder,
     private spinner: SpinnerService,
@@ -55,8 +61,7 @@ export class SimulatorComponent implements OnInit {
       valorPrimerPago: [''],
     });
     this.terminosPoliticaForm = this.fb.group({
-      aceptoTerminos: [false, Validators.required],
-      aceptoPolitica: [false, Validators.required],
+      aceptoTerminosPolitica: [false, Validators.required]
     });
   }
 
@@ -72,6 +77,8 @@ export class SimulatorComponent implements OnInit {
     });
 
     this.obtenerListadoRamos();
+    this.obtenerListadoFestivos();
+
     this.spinner.hideSpinner();
   }
 
@@ -143,7 +150,7 @@ export class SimulatorComponent implements OnInit {
 
   // Función para calcular la cotización
   calcularCotizacion(valorMayorPago?: number): void {
-    if (this.cotizadorForm.valid && this.simulacionActiva == false) {
+    if (this.cotizadorForm.valid) {
       this.spinner.showSpinner();
 
       //Validar recalculo
@@ -154,7 +161,7 @@ export class SimulatorComponent implements OnInit {
         "fechaInicioVigencia": this.cotizadorForm.value.fechaInicioPoliza,
         "fechaLegalizacion": this.cotizadorForm.value.fechaLegalizacion,
         "plazo": Number(this.cotizadorForm.value.plazo),
-        "esBeneficiarioOneroso": this.cotizadorForm.value.beneficiario == "true" ? true: false,
+        "esBeneficiarioOneroso": this.cotizadorForm.value.beneficiario == "true" ? true : false,
         "esMayorValorPago": esMayorValorPago,
         "valorMayorPago": valorMayorPago ?? null,
         "valorPoliza": this.convertCurrencyStringToNumber(this.cotizadorForm.value.valorPoliza)
@@ -166,12 +173,21 @@ export class SimulatorComponent implements OnInit {
             this.setFormState(true); //Método de control para mostrar la simulación
             this.planPagos = response.calcularCotizacionPlanPagosDTO;
             this.resumenCredito = response.calcularCotizacionResumenDTO;
+
+            if (!esMayorValorPago) {
+              this.valorPrimerPagoSimulacionOriginal = this.resumenCredito.valorPrimeraCuota;
+              this.idSimulacionOriginal = this.resumenCredito.idSimulacionCredito;
+            }
+
           } else {
             this.mostrarMensajeError(response.mensaje);
           }
           this.spinner.hideSpinner();
         }
       );
+    } else {
+      this.triggerValidation(this.cotizadorForm);
+      this.mostrarMensajeError("¡Ups! Recuerda completar todos los campos para realizar la cotización.");
     }
   }
 
@@ -181,11 +197,11 @@ export class SimulatorComponent implements OnInit {
 
       const valorMayorPago = this.convertCurrencyStringToNumber(valorPago);
       // Validar que el pago sea mayor a la primera cuota actual
-      if (valorMayorPago > this.resumenCredito.valorPrimeraCuota) {
+      if (valorMayorPago >= this.valorPrimerPagoSimulacionOriginal) { //
         this.setFormState(false); //Método de control para mostrar la simulación
         this.calcularCotizacion(valorMayorPago);
       } else {
-        const valorPrimeraCuotaActual = this.convertNumberToCurrencyString(this.resumenCredito.valorPrimeraCuota);
+        const valorPrimeraCuotaActual = this.convertNumberToCurrencyString(this.valorPrimerPagoSimulacionOriginal);
         this.mostrarMensajeError(`El valor del primer pago debe ser mayor a ${valorPrimeraCuotaActual}.`);
       }
 
@@ -206,19 +222,85 @@ export class SimulatorComponent implements OnInit {
     )
   }
 
-  validarFechaInicioPoliza(){
-    const fechaHoy = new Date();
-    const fechaInicioPoliza = new Date(this.cotizadorForm.value.fechaInicioPoliza);
+  obtenerListadoFestivos(): void {
+    this.cotizadorService.obtenerFestivos().subscribe(
+      (response: ResponseFestivos) => {
+        if (!response.error) {
+          this.festivos = response.festivos;
+          this.cotizadorForm.get('fechaLegalizacion')?.setValue(DateUtils.obtenerFechaMañanaHabil(this.festivos));
+        } else {
+          this.mostrarMensajeError(response.mensaje);
+        }
+      }
+    )
+  }
 
-    const diferencia = this.calcularDiferenciaDias(fechaInicioPoliza, fechaHoy);
-    
-    if(diferencia > 30 && diferencia <= 90){
+  validarFechasInicioPolizaIngresoCotizador() {
+    const fechaInicioPoliza = this.cotizadorForm.value.fechaInicioPoliza;
+
+    const diferencia = DateUtils.calcularDiferenciaDias(
+      DateUtils.getTodayStartOfDay(),
+      DateUtils.parseDate(fechaInicioPoliza));
+
+    if (diferencia > 17 && this.cotizadorForm.value.producto == 2) {
+      this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de ingreso no puede ser mayor a 17 días.');
+      this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
+      return;
+    }
+
+    if (DateUtils.parseDate(fechaInicioPoliza) <= DateUtils.parseDate(DateUtils.formatDateToYYYYMMDD(addMonths(new Date(), -3)))) {
+      this.mostrarMensajeError('Una póliza con más de 3 meses de expedida no es objeto de financiación.');
+      this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
+      return;
+    }
+
+    if (diferencia > 30 && diferencia <= 90) {
       this.mostrarMensajeError('Favor comuníquese con su asesor comercial.');
     }
 
-    if(diferencia > 90){
+    if (diferencia > 90) {
       this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de legalización no puede ser mayor a 90 días.');
     }
+
+    // if(DateUtils.validarFestivoFinDeSemana(this.festivos, fechaInicioPoliza)){
+    //   this.mostrarMensajeError('La Fecha Inicio de Vigencia ingresada corresponde a un día no hábil, ingresa una nueva fecha.');
+    //   this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
+    //   return;
+    // }
+
+    if (this.cotizadorForm.value.fechaLegalizacion != '') {
+      this.validarFechasInicioPolizaLegalizacion();
+    }
+  }
+
+  validarFechasInicioPolizaLegalizacion() {
+    const fechaInicioPoliza = this.cotizadorForm.value.fechaInicioPoliza;
+    const fechaLegalizacion = this.cotizadorForm.value.fechaLegalizacion;
+
+    const diferencia = DateUtils.calcularDiferenciaDias(
+      DateUtils.parseDate(fechaInicioPoliza),
+      DateUtils.parseDate(fechaLegalizacion)
+    );
+
+    // if (diferencia > 30 && diferencia <= 90) {
+    //   this.mostrarMensajeError('Favor comuníquese con su asesor comercial.');
+    // }
+
+    // if (diferencia > 90) {
+    //   this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de desembolso no puede ser mayor a 90 días.');
+    // }
+
+    // if (diferencia > 17 && this.cotizadorForm.value.producto == 2) {
+    //   this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de desembolso no puede ser mayor a 17 días.');
+    //   this.cotizadorForm.get('fechaLegalizacion')?.setValue('');
+    //   return;
+    // }
+
+    // if (DateUtils.validarFestivoFinDeSemana(this.festivos, fechaLegalizacion)) {
+    //   this.mostrarMensajeError('La Fecha de Desembolso ingresada corresponde a un día no hábil, ingresa una nueva fecha.');
+    //   this.cotizadorForm.get('fechaLegalizacion')?.setValue('');
+    //   return;
+    // }
 
     this.calcularPlazos();
   }
@@ -240,10 +322,9 @@ export class SimulatorComponent implements OnInit {
         (response: ResponsePlazos) => {
           if (!response.error) {
             this.plazos = response.plazos;
-            this.plazoMaximo = this.plazos[ this.plazos.length - 1 ]
+            this.plazoMaximo = this.plazos[this.plazos.length - 1]
           } else {
-            if(response.idError == 1)
-            {
+            if (response.idError == 1) {
               this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
             }
             this.mostrarMensajeError(response.mensaje);
@@ -255,13 +336,13 @@ export class SimulatorComponent implements OnInit {
 
   // Función para abrir modal de personalizar cotización
   abrirModalPersonalizacion(id: number): void {
-    const terminos = this.terminosPoliticaForm.value.aceptoTerminos;
-    const politicas = this.terminosPoliticaForm.value.aceptoPolitica;
+    const terminosPolitica = this.terminosPoliticaForm.value.aceptoTerminosPolitica;
 
-    if (terminos && politicas) {
+    if (terminosPolitica) {
       switch (id) {
         case 1:
           this.datosModal = {
+            idSimulacionOriginal: this.idSimulacionOriginal,
             idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos personales del tomador de la póliza para descargar la Cotización',
@@ -270,6 +351,7 @@ export class SimulatorComponent implements OnInit {
           break;
         case 2:
           this.datosModal = {
+            idSimulacionOriginal: this.idSimulacionOriginal,
             idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos personales del tomador de la póliza para enviar la Cotización',
@@ -278,6 +360,7 @@ export class SimulatorComponent implements OnInit {
           break;
         case 3:
           this.datosModal = {
+            idSimulacionOriginal: this.idSimulacionOriginal,
             idSimulacion: this.resumenCredito.idSimulacionCredito,
             idFormulario: id,
             titulo: 'Ingresa los datos del tomador de la póliza y continúa con el diligenciamiento del pagaré',
@@ -285,7 +368,13 @@ export class SimulatorComponent implements OnInit {
           };
           break;
         default:
-          this.datosModal = { idSimulacion: this.resumenCredito.idSimulacionCredito, idFormulario: id, titulo: '', tituloBoton: '' };
+          this.datosModal = {
+            idSimulacionOriginal: this.idSimulacionOriginal,
+            idSimulacion: this.resumenCredito.idSimulacionCredito,
+            idFormulario: id,
+            titulo: '',
+            tituloBoton: ''
+          };
           break;
       }
 
@@ -295,35 +384,28 @@ export class SimulatorComponent implements OnInit {
     }
   }
 
-  habilitarBotonCalcular(): boolean {
-    if (this.simulacionActiva || this.simulacionRecalculada) return true;
-    return this.cotizadorForm.invalid && !this.simulacionActiva;
-  }
-
   mostrarMensajeError(mensaje: string) {
     this.mensajeAlerta = mensaje;
     this.switchModalService.$modalAlert.emit(true);
   }
 
   private setFormState(isDisabled: boolean) {
-    this.simulacionActiva = isDisabled;
-    if (isDisabled) {
-      this.cotizadorForm.disable();
-    } else {
-      this.cotizadorForm.enable();
-    }
+    this.simulacionActiva = true;
+    // if (isDisabled) {
+    //   this.cotizadorForm.disable();
+    // } else {
+    //   this.cotizadorForm.enable();
+    // }
   }
 
   descargarDocumento(ruta: string, nombre: string) {
     this.fileService.downloadFile(ruta, nombre);
   }
 
-  calcularDiferenciaDias(fecha1: Date, fecha2: Date) {    
-    // Convertir ambas fechas a solo fechas sin horas para evitar problemas de cálculo
-    const fechaUno = new Date(fecha1.getFullYear(), fecha1.getMonth(), fecha1.getDate());
-    const fechaDos = new Date(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate());
-
-    const diffTime = Math.abs(fechaUno.getTime() - fechaDos.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  triggerValidation(form: FormGroup) {
+    Object.keys(form.controls).forEach(field => {
+      const control = form.get(field);
+      control?.markAsTouched({ onlySelf: true });
+    });
   }
 }

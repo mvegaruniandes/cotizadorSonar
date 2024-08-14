@@ -133,6 +133,7 @@ export class PersonalizeSimulationModalComponent {
       this.spinner.showSpinner();
 
       let data = {
+        'idSimulacionOriginal': this.datos.idSimulacionOriginal,
         'idSimulacionCredito': this.datos.idSimulacion,
         'idTipoDocumento': this.tomadorForm.value.tipoDocumento,
         'numeroDocumento': this.tomadorForm.value.numeroIdentificacion,

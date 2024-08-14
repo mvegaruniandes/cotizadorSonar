@@ -7,6 +7,13 @@ export interface ResponseTipoDocumento {
     mensaje: string;
 }
 
+export interface ResponseFestivos {
+    festivos: string[];
+    idError:  number;
+    error:    boolean;
+    mensaje:  string;
+}
+
 export interface ResponseProductos {
     ramos: Ramo[];
     idError: number;

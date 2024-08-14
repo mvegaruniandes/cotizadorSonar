@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, map } from 'rxjs';
 import { StorageService } from './storage.service';
-import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacion, ResponseEnviarCotizacion, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
+import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacion, ResponseEnviarCotizacion, ResponseFestivos, ResponsePlazos, ResponseProductos, ResponseTipoDocumento } from '../models/response';
 
 
 @Injectable({
@@ -10,14 +10,22 @@ import { ResponseContinuarProceso, ResponseCotizacion, ResponseDescargaCotizacio
 })
 export class CotizadorService {
   //private apiUrl = 'https://dev.aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
-  //private apiUrl = 'https://aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
-  private apiUrl = 'https://localhost:7050/api/';
+  private apiUrl = 'https://aplicaciones.crediestado.com.co/CotizadorCrediestadoBack/api/';
+  //private apiUrl = 'https://localhost:7050/api/';
 
   constructor(private http: HttpClient, private storage: StorageService) { }
 
   // Servicio para obtener el listado de tipos de identificacion
   obtenerTiposDocumento(): Observable<any> {
     return this.http.get<ResponseTipoDocumento>(`${this.apiUrl}cotizador/obtenerTiposDocumento`).pipe(
+      map(response => { return response }),
+      catchError(this.handleError)  
+    );
+  }
+
+  // Servicio para obtener el listado de festivos
+  obtenerFestivos(): Observable<any> {
+    return this.http.get<ResponseFestivos>(`${this.apiUrl}cotizador/obtenerFestivos`).pipe(
       map(response => { return response }),
       catchError(this.handleError)  
     );
