@@ -81,7 +81,7 @@
                   </div>
                 </label>
                 <input id="fechaLegalizacion" type="date" formControlName="fechaLegalizacion" [readonly]="true"
-                  (blur)="validarFechasInicioPolizaLegalizacion()" autocomplete="off" class="p-2 border rounded" />
+                   autocomplete="off" class="p-2 border rounded" />
                 @if(cotizadorForm.controls['fechaLegalizacion'].invalid &&
                 cotizadorForm.controls['fechaLegalizacion'].touched){
                 <app-input-message-error></app-input-message-error>
@@ -246,15 +246,22 @@
             <form [formGroup]="terminosPoliticaForm">
               <div class="label-group flex items-center ml-5">
                 <div class="flex items-center">
-                  <input type="checkbox" id="aceptoTerminosPolitica" class="checkbox mr-2"
-                    formControlName="aceptoTerminosPolitica" />
+                  <input type="checkbox" id="aceptoTerminos" class="checkbox mr-2" formControlName="aceptoTerminos" />
                   <span>
-                    Acepto los
+                    Acepto -
                     <a id="linkDescarga"
                       (click)="descargarDocumento('assets/docs/TERMINOS Y CONDICIONES DE USO Crediestado.pdf', 'TÉRMINOS Y CONDICIONES DE USO DEL SITIO WEB Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">
                       Términos y Condiciones de Uso
-                    </a> y la
+                    </a>
+                  </span>
+                </div>
+              </div>
+              <div class="label-group flex items-center ml-5">
+                <div class="flex items-center">
+                  <input type="checkbox" id="aceptoPolitica" class="checkbox mr-2" formControlName="aceptoPolitica" />
+                  <span>
+                    Acepto -
                     <a id="linkDescarga"
                       (click)="descargarDocumento('assets/docs/POLITICA DE PRIVACIDAD Y PROTECCION DE DATOS Crediestado.pdf', 'POLÍTICA PRIVACIDAD Y PROTECCIÓN DE DATOS Crediestado.pdf')"
                       class="text-purple-link cursor-pointer">
@@ -287,7 +294,7 @@
                   style="background-color: #3C1B71;" (click)="abrirModalPersonalizacion(3)">
                   <span class="material-symbols-outlined" style="font-size: 30px; color: #fff;">history_edu</span>
                 </button>
-                <span class="mt-2 text-center text-sm">Continua el proceso</span>
+                <span class="mt-2 text-center text-sm">Continúa el proceso</span>
               </div>
             </div>
           </div>

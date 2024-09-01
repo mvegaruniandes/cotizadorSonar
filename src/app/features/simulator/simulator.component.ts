@@ -24,6 +24,8 @@ export class SimulatorComponent implements OnInit {
   simulacionRecalculada: boolean = false;
 
   isFormDisabled: boolean = false;
+  optionsDisabled: boolean = false;
+  valorFinanciarActual: string = '';
 
   cotizadorForm: FormGroup;
   pagoMayorForm: FormGroup;
@@ -61,7 +63,8 @@ export class SimulatorComponent implements OnInit {
       valorPrimerPago: [''],
     });
     this.terminosPoliticaForm = this.fb.group({
-      aceptoTerminosPolitica: [false, Validators.required]
+      aceptoTerminos: [false, Validators.required],
+      aceptoPolitica: [false, Validators.required],
     });
   }
 
@@ -173,13 +176,23 @@ export class SimulatorComponent implements OnInit {
             this.setFormState(true); //Método de control para mostrar la simulación
             this.planPagos = response.calcularCotizacionPlanPagosDTO;
             this.resumenCredito = response.calcularCotizacionResumenDTO;
-
+            this.optionsDisabled = false;
             if (!esMayorValorPago) {
               this.valorPrimerPagoSimulacionOriginal = this.resumenCredito.valorPrimeraCuota;
               this.idSimulacionOriginal = this.resumenCredito.idSimulacionCredito;
+
+              this.pagoMayorForm.get('valorPrimerPago')?.setValue('');
+              this.pagoMayorForm.get('pago')?.setValue('false');
             }
 
           } else {
+            if (response.idError == 3) {
+              this.optionsDisabled = true;
+
+              this.valorFinanciarActual = this.pagoMayorForm.value.valorPoliza != '' 
+                ? this.pagoMayorForm.value.valorPrimerPago 
+                : this.cotizadorForm.value.valorPoliza;
+            }
             this.mostrarMensajeError(response.mensaje);
           }
           this.spinner.hideSpinner();
@@ -206,7 +219,7 @@ export class SimulatorComponent implements OnInit {
       }
 
     } else {
-      this.mostrarMensajeError("Ingresa un valor en mayor pago para recalculcar la cotización.");
+      this.mostrarMensajeError("Ingresa un valor en mayor pago para recalculcar tu cotización.");
     }
   }
 
@@ -243,7 +256,7 @@ export class SimulatorComponent implements OnInit {
       DateUtils.parseDate(fechaInicioPoliza));
 
     if (diferencia > 17 && this.cotizadorForm.value.producto == 2) {
-      this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de ingreso no puede ser mayor a 17 días.');
+      this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de ingreso no puede ser mayor a 17 días. Por favor, comunícate con tu asesor comercial.');
       this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
       return;
     }
@@ -255,52 +268,12 @@ export class SimulatorComponent implements OnInit {
     }
 
     if (diferencia > 30 && diferencia <= 90) {
-      this.mostrarMensajeError('Favor comuníquese con su asesor comercial.');
+      this.mostrarMensajeError('Por favor, comunícate con tu asesor comercial. Recuerda que se requiere autorización de seguros del Estado y la carta de declaración de no siniestralidad.');
     }
 
     if (diferencia > 90) {
       this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de legalización no puede ser mayor a 90 días.');
     }
-
-    // if(DateUtils.validarFestivoFinDeSemana(this.festivos, fechaInicioPoliza)){
-    //   this.mostrarMensajeError('La Fecha Inicio de Vigencia ingresada corresponde a un día no hábil, ingresa una nueva fecha.');
-    //   this.cotizadorForm.get('fechaInicioPoliza')?.setValue('');
-    //   return;
-    // }
-
-    if (this.cotizadorForm.value.fechaLegalizacion != '') {
-      this.validarFechasInicioPolizaLegalizacion();
-    }
-  }
-
-  validarFechasInicioPolizaLegalizacion() {
-    const fechaInicioPoliza = this.cotizadorForm.value.fechaInicioPoliza;
-    const fechaLegalizacion = this.cotizadorForm.value.fechaLegalizacion;
-
-    const diferencia = DateUtils.calcularDiferenciaDias(
-      DateUtils.parseDate(fechaInicioPoliza),
-      DateUtils.parseDate(fechaLegalizacion)
-    );
-
-    // if (diferencia > 30 && diferencia <= 90) {
-    //   this.mostrarMensajeError('Favor comuníquese con su asesor comercial.');
-    // }
-
-    // if (diferencia > 90) {
-    //   this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de desembolso no puede ser mayor a 90 días.');
-    // }
-
-    // if (diferencia > 17 && this.cotizadorForm.value.producto == 2) {
-    //   this.mostrarMensajeError('El máximo de días entre la fecha de inicio de póliza y fecha de desembolso no puede ser mayor a 17 días.');
-    //   this.cotizadorForm.get('fechaLegalizacion')?.setValue('');
-    //   return;
-    // }
-
-    // if (DateUtils.validarFestivoFinDeSemana(this.festivos, fechaLegalizacion)) {
-    //   this.mostrarMensajeError('La Fecha de Desembolso ingresada corresponde a un día no hábil, ingresa una nueva fecha.');
-    //   this.cotizadorForm.get('fechaLegalizacion')?.setValue('');
-    //   return;
-    // }
 
     this.calcularPlazos();
   }
@@ -336,51 +309,57 @@ export class SimulatorComponent implements OnInit {
 
   // Función para abrir modal de personalizar cotización
   abrirModalPersonalizacion(id: number): void {
-    const terminosPolitica = this.terminosPoliticaForm.value.aceptoTerminosPolitica;
+    const terminos = this.terminosPoliticaForm.value.aceptoTerminos;
+    const politicas = this.terminosPoliticaForm.value.aceptoPolitica;
 
-    if (terminosPolitica) {
-      switch (id) {
-        case 1:
-          this.datosModal = {
-            idSimulacionOriginal: this.idSimulacionOriginal,
-            idSimulacion: this.resumenCredito.idSimulacionCredito,
-            idFormulario: id,
-            titulo: 'Ingresa los datos personales del tomador de la póliza para descargar la Cotización',
-            tituloBoton: 'Descargar'
-          };
-          break;
-        case 2:
-          this.datosModal = {
-            idSimulacionOriginal: this.idSimulacionOriginal,
-            idSimulacion: this.resumenCredito.idSimulacionCredito,
-            idFormulario: id,
-            titulo: 'Ingresa los datos personales del tomador de la póliza para enviar la Cotización',
-            tituloBoton: 'Enviar'
-          };
-          break;
-        case 3:
-          this.datosModal = {
-            idSimulacionOriginal: this.idSimulacionOriginal,
-            idSimulacion: this.resumenCredito.idSimulacionCredito,
-            idFormulario: id,
-            titulo: 'Ingresa los datos del tomador de la póliza y continúa con el diligenciamiento del pagaré',
-            tituloBoton: 'Continuar'
-          };
-          break;
-        default:
-          this.datosModal = {
-            idSimulacionOriginal: this.idSimulacionOriginal,
-            idSimulacion: this.resumenCredito.idSimulacionCredito,
-            idFormulario: id,
-            titulo: '',
-            tituloBoton: ''
-          };
-          break;
+    if (!this.optionsDisabled) {
+      if (terminos && politicas) {
+        switch (id) {
+          case 1:
+            this.datosModal = {
+              idSimulacionOriginal: this.idSimulacionOriginal,
+              idSimulacion: this.resumenCredito.idSimulacionCredito,
+              idFormulario: id,
+              titulo: 'Ingresa los datos personales del tomador de la póliza para descargar la Cotización',
+              tituloBoton: 'Descargar'
+            };
+            break;
+          case 2:
+            this.datosModal = {
+              idSimulacionOriginal: this.idSimulacionOriginal,
+              idSimulacion: this.resumenCredito.idSimulacionCredito,
+              idFormulario: id,
+              titulo: 'Ingresa los datos personales del tomador de la póliza para enviar la Cotización',
+              tituloBoton: 'Enviar'
+            };
+            break;
+          case 3:
+            this.datosModal = {
+              idSimulacionOriginal: this.idSimulacionOriginal,
+              idSimulacion: this.resumenCredito.idSimulacionCredito,
+              idFormulario: id,
+              titulo: 'Ingresa los datos del tomador de la póliza y continúa con el proceso de solicitud de su financiación',
+              tituloBoton: 'Continuar'
+            };
+            break;
+          default:
+            this.datosModal = {
+              idSimulacionOriginal: this.idSimulacionOriginal,
+              idSimulacion: this.resumenCredito.idSimulacionCredito,
+              idFormulario: id,
+              titulo: '',
+              tituloBoton: ''
+            };
+            break;
+        }
+
+        this.switchModalService.$modalPersonalize.emit(true);
+      } else {
+        this.mostrarMensajeError('Debes aceptar los Términos y Condiciones de Uso y la Política de Tratamiento de Datos para continuar.');
       }
-
-      this.switchModalService.$modalPersonalize.emit(true);
-    } else {
-      this.mostrarMensajeError('Debes aceptar los Términos y Condiciones de Uso y la Política de Tratamiento de Datos para continuar.');
+    }
+    else {
+      this.mostrarMensajeError('Recuerde reducir el plazo para continuar con el proceso, ya que el valor mínimo de las cuotas periódicas deberán ser igual o superior a $ 100.000.');
     }
   }
 
@@ -391,11 +370,6 @@ export class SimulatorComponent implements OnInit {
 
   private setFormState(isDisabled: boolean) {
     this.simulacionActiva = true;
-    // if (isDisabled) {
-    //   this.cotizadorForm.disable();
-    // } else {
-    //   this.cotizadorForm.enable();
-    // }
   }
 
   descargarDocumento(ruta: string, nombre: string) {
