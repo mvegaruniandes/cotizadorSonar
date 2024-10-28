@@ -16,6 +16,9 @@ import localeEs from '@angular/common/locales/es';
 import { NumberFormatPipe } from './core/pipes/number-format.pipe';
 import { PersonalizeSimulationModalComponent } from './shared/components/personalize-simulation-modal/personalize-simulation-modal.component';
 import { AlertModalComponent } from './shared/components/alert-modal/alert-modal.component';
+import { NgToastModule } from 'ng-angular-popup';
+import { PercentageFormatPipe } from './core/pipes/percentage-format.pipe';
+import { InputMessageErrorComponent } from './shared/components/input-message-error/input-message-error.component';
 
 registerLocaleData(localeEs);
 
@@ -24,18 +27,21 @@ registerLocaleData(localeEs);
     AppComponent,
     SimulatorComponent,
     NumberFormatPipe,
+    PercentageFormatPipe,
     AccordionInfoComponent,
     SimulationDatatableComponent,
     CreditSummaryInformationComponent,
     PersonalizeSimulationModalComponent,
-    AlertModalComponent
+    AlertModalComponent,
+    InputMessageErrorComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    NgxSpinnerModule.forRoot(),
+    NgxSpinnerModule.forRoot({ type: 'ball-beat' }),
+    NgToastModule,
     FormsModule,
     ReactiveFormsModule
   ],

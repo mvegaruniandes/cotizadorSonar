@@ -121,10 +121,15 @@ p{
     font-size: 16px;
 }
 
+.custom-a {
+    color: #3C1B71;
+    font-weight: 600;
+}
+
 @media screen and (max-width: 600px) {
     .primary-button, .secondary-button {
         width: 300px;
     }
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

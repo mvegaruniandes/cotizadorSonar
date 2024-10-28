@@ -1,10 +1,17 @@
-import { CalcularCotizacionPlanPagos, CalcularCotizacionResumen, Ramo, TipoDocumento } from "./cotizador-models";
+import { CalcularCotizacionPlanPagos, CalcularCotizacionResumen, DocumentoPDF, PDFGenerado, Ramo, TipoDocumento } from "./cotizador-models";
 
 export interface ResponseTipoDocumento {
     tiposDocumento: TipoDocumento[];
     idError: number;
     error: boolean;
     mensaje: string;
+}
+
+export interface ResponseFestivos {
+    festivos: string[];
+    idError:  number;
+    error:    boolean;
+    mensaje:  string;
 }
 
 export interface ResponseProductos {
@@ -27,4 +34,23 @@ export interface ResponseCotizacion {
     idError: number;
     error: boolean;
     mensaje: string;
+}
+
+export interface ResponseDescargaCotizacion {
+    estado:  PDFGenerado;
+    documento: DocumentoPDF;
+}
+
+export interface ResponseEnviarCotizacion {
+    enviado: boolean;
+    idError: number;
+    error:   boolean;
+    mensaje: string;
+}
+
+export interface ResponseContinuarProceso {
+    urlProceso: string;
+    idError:    number;
+    error:      boolean;
+    mensaje:    string;
 }
